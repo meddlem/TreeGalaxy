@@ -33,10 +33,14 @@ program main
     if (prtplt .or. mod(i,10) == 0) call particle_plot(r) 
      
     ! time integration using the "velocity Verlet" algorithm: 
-    r = r + p*dt + 0.5_dp*F*(dt**2) ! update positions
-    p = p + 0.5_dp*F*dt ! update momentum (1/2)
+    !r = r + p*dt + 0.5_dp*F*(dt**2) ! update positions
+    !p = p + 0.5_dp*F*dt ! update momentum (1/2)
+    !call force(F,r) ! update force
+    !p = p + 0.5_dp*F*dt ! update momentum (2/2)
+    ! leapfrog 
+    r = r + 0.5_dp*p*dt
     call force(F,r) ! update force
-    p = p + 0.5_dp*F*dt ! update momentum (2/2)
+    p = p + F*dt
   enddo
   
   call plend()

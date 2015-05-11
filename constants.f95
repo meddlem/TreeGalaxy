@@ -23,7 +23,7 @@ module constants
   integer, parameter :: dp = selected_real_kind(15,307)
   integer, parameter :: lng = selected_int_kind(8)
 
-  real(dp), parameter :: dt = 0.05_dp 
+  real(dp), parameter :: dt = 0.01_dp 
   real(dp), parameter :: pi = 4._dp*atan(1._dp) 
   
   integer, parameter :: steps = 30000
