@@ -106,8 +106,8 @@ contains
     endif
   end subroutine
 
-  ! lists locations of particles contained in the tree
   recursive subroutine getpoints(N)
+    ! lists locations of particles contained in the tree
     type(node), pointer :: N
 
     if (N%leaf_node .and. N%contains_particle) then
@@ -128,6 +128,14 @@ contains
 
     N%halfDim = 1.1_dp*max(maxval(abs(p(:,1))), maxval(abs(p(:,2))))
     N%origin  = [0._dp, 0._dp]
+  end subroutine
+
+  subroutine get_rel_distance(p0, N, d)
+    real(dp), intent(in)    :: p0(:)
+    real(dp), intent(inout) :: d(:, :)
+    type(node), pointer     :: N
+
+
   end subroutine
 end module
 
@@ -157,4 +165,5 @@ program tree
   call insert_particle(p(4,:), root)
   ! and read them again
   call getpoints(root)
+  ! get relative distances from point p_0 to all points in tree
 end program
