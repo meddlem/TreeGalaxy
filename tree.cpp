@@ -43,13 +43,13 @@ bool node::isleafnode(void) const{
 
 int node::get_quadrant(const pos* point) const{
   int quad = 0;
-  if(point->x > origin[1] && point->y < origin[2]){
+  if((point->x > origin[0]) && (point->y < origin[1])){
     quad = 1;
   }
-  else if(point->x < origin[1] && point->y < origin[2]){
+  else if((point->x < origin[0]) && (point->y < origin[1])){
     quad = 2;
   }
-  else if(point->x < origin[1] && point->y > origin[2]){
+  else if((point->x < origin[0]) && (point->y > origin[1])){
     quad = 3;
   }
 
@@ -65,14 +65,15 @@ void node::insert_particle(pos* point){
     else{
       pos* point_old = data;
       data = NULL;
+      //cout << point->x << "\n";
 
       //make the quadrants
       double halfDim_new = halfDim/2;
-      vector< double> origin_new;
+      vector<double> origin_new(2);
 
       for(int i=0; i<4; i++){
-        origin_new[0] = origin[0] + halfDim/sqrt(2)*((i<2)?1:-1);
-        origin_new[1] = origin[1] + halfDim/sqrt(2)*((i==0||i==4)?1:-1);
+        origin_new[0] = origin[0] + ((i<2)?1:-1)*halfDim/sqrt(2);
+        origin_new[1] = origin[1] + ((i==0||i==3)?1:-1)*halfDim/sqrt(2);
         quadrant[i] = new node(halfDim_new, origin_new);
       }
       
@@ -90,5 +91,23 @@ void node::insert_particle(pos* point){
 }
 
 int main(void){
+  vector<double> origin = {0,0};
+  node* root = new node(2,origin);
+  
+  pos p1;
+  pos* p1t;
+  p1.x = 1.1;
+  p1.y = 0.5;
+  p1t = &p1;
+
+  pos p2;
+  pos* p2t;
+  p2.x = 0.9;
+  p2.y = 0.4;
+  p2t = &p2;
+
+  root -> insert_particle(p1t);
+  root -> insert_particle(p2t);
+
   return 0;
 }
