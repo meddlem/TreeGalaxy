@@ -9,8 +9,9 @@ module objects
     real(dp) :: halfDim ! half side of the node
     real(dp) :: origin(2) ! origin of the node
     real(dp) :: loc(2) ! node center of mass 
+    real(dp) :: CM(2) ! node center of mass 
     !(if 1 particle in node, this is just particle location) 
-    real(dp) :: mass   ! node mass (mass of all particles in node)
+    real(dp) :: mass = 0._dp  ! node mass (mass of all particles in node)
 
     logical  :: contains_particle = .false. 
     logical  :: leaf_node = .true.
@@ -38,7 +39,8 @@ contains
       if (.not. N%contains_particle) then
         ! if no particles, just put particle in this node
         N%contains_particle = .true.
-        N%loc = p
+        N%mass = N%mass + p%mass 
+        N%CM = p
       else
         ! otherwise we need to split up the node into quadrants, 
         ! and try to put new point there, and move old point to

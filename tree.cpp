@@ -12,6 +12,7 @@ class node{
   private:
     pos *data; 
     vector<double> origin;
+    vector<double> CM;
     double mass;
     double halfDim;
     node *quadrant[4];
@@ -33,8 +34,11 @@ class node{
 
     //prototypes
     bool isleafnode(void) const;
+
     int get_quadrant(const pos* point) const;
+    
     void insert_particle(pos* point);
+    
     void getpoints(vector<pos*>& results);
 };
 
@@ -120,14 +124,17 @@ int main(void){
   vector<pos> p;
   int n = 100;
 
-  // insert n particles into tree..
-  /*for(int i = 0; i<n; i++){
+  // insert particles into tree..
+  for(int i = 0; i<n; i++){
     p.push_back (pos());
-    p[i].x = randU();
-    p[i].y = randU();
+    p[i].x = (i+1)/double(n);
+    p[i].y = (i+1)/double(n);
+  }
+  
+  for(int i = 0; i<n; i++){
     root -> insert_particle(&p[i]);
-  }*/
-  p.push_back (pos());
+  }
+  /*p.push_back (pos());
   p[0].x = 1;
   p[0].y = -1;
   p.push_back (pos());
@@ -135,14 +142,12 @@ int main(void){
   p[1].y = 1;
   p.push_back (pos());
   p[2].x = 1.1;
-  p[2].y = 1.1;
+  p[2].y = 1.1;*/
 
-  root -> insert_particle(&p[0]);
-  root -> insert_particle(&p[1]);
-  root -> insert_particle(&p[2]);
+  // return list of results
   vector<pos*> results;
-  // print points..
   root -> getpoints(results);
-  cout << results[0]->x << "\n";
+  cout << results[1]->x << "\n";
+  cout << results[1]->y << "\n";
   return 0;
 }
