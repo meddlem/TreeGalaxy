@@ -35,6 +35,7 @@ class node{
     bool isleafnode(void) const;
     int get_quadrant(const pos* point) const;
     void insert_particle(pos* point);
+    void getpoints(vector<pos*>& results);
 };
 
 bool node::isleafnode(void) const{
@@ -90,24 +91,58 @@ void node::insert_particle(pos* point){
   }
 }
 
+double randU(){ // Random number between 1, -1
+  double r = 2*rand()/double(RAND_MAX) - 1;
+  return r; 
+}
+
+void node::getpoints(vector<pos*> &results){
+  if(isleafnode()){
+    if(data != NULL){
+      results.push_back(data);
+      //cout << "(" << data->x << " " << data->y << ")" << "\n";
+    }
+  }
+  else{
+    for(int i=0; i<4; i++){
+      quadrant[i] -> getpoints(results);
+    }
+  }
+}
+
+//double defbox(vector<pos> p){ 
+//}
+
 int main(void){
   vector<double> origin = {0,0};
   node* root = new node(2,origin);
   
-  pos p1;
-  pos* p1t;
-  p1.x = 1.1;
-  p1.y = 0.5;
-  p1t = &p1;
+  vector<pos> p;
+  int n = 100;
 
-  pos p2;
-  pos* p2t;
-  p2.x = 0.9;
-  p2.y = 0.4;
-  p2t = &p2;
+  // insert n particles into tree..
+  /*for(int i = 0; i<n; i++){
+    p.push_back (pos());
+    p[i].x = randU();
+    p[i].y = randU();
+    root -> insert_particle(&p[i]);
+  }*/
+  p.push_back (pos());
+  p[0].x = 1;
+  p[0].y = -1;
+  p.push_back (pos());
+  p[1].x = 1;
+  p[1].y = 1;
+  p.push_back (pos());
+  p[2].x = 1.1;
+  p[2].y = 1.1;
 
-  root -> insert_particle(p1t);
-  root -> insert_particle(p2t);
-
+  root -> insert_particle(&p[0]);
+  root -> insert_particle(&p[1]);
+  root -> insert_particle(&p[2]);
+  vector<pos*> results;
+  // print points..
+  root -> getpoints(results);
+  cout << results[0]->x << "\n";
   return 0;
 }

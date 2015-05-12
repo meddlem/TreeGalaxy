@@ -135,7 +135,6 @@ contains
     real(dp), intent(inout) :: d(:, :)
     type(node), pointer     :: N
 
-
   end subroutine
 end module
 
