@@ -124,7 +124,9 @@ void node::insert_particle(part* particle){
 // calculates forces particles/ CMs on a given particle
 void node::calcforce(part* particle, vector<vector<double>*> &forces){
   if(isexternalnode()){
-    if(particle_present != particle){
+    if((particle_present != NULL) && (particle_present !=particle)){ 
+      // dit laatste kan problemen geven, check met sarwan
+      // weet niet of dit kan met pointers
       // calculate force
       double dx = particle->x - particle_present->x;
       double dy = particle->y - particle_present->y;
@@ -133,8 +135,8 @@ void node::calcforce(part* particle, vector<vector<double>*> &forces){
       double m2 = particle->mass;
       
       vector<double> force(2);
-      force[0]= -dx*m1*m2/(d*d); // should be a vector..
-      force[1]= -dy*m1*m2/(d*d); // should be a vector..
+      force[0]= -dx*m1*m2/(d*d); 
+      force[1]= -dy*m1*m2/(d*d); 
       
       // push force vector into list containing all force vectors..
       forces.push_back(&force);
@@ -217,8 +219,17 @@ int main(void){
   // return list of results
   vector<part*> results;
   root -> getpoints(results);
+
+  // print 1 of them as a check 
   cout << results[1]->x << "\n";
   cout << results[1]->y << "\n";
   cout << results[1]->mass << "\n";
+  
+  // calc forces on 1st particle?
+  vector<vector<double>*> forces;
+  root -> calcforce(&p[0],forces);
+
+  double test = (*forces[0])[1];
+  cout << test << "\n";
   return 0;
 }
