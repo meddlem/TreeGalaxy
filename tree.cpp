@@ -1,9 +1,10 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
+
 using namespace std;
 
-// structure for the particle (coords + mass)
+// structure for the particle, holds coords + mass
 struct part {
  double x;
  double y;
@@ -16,11 +17,12 @@ class node{
     part CM; // center of mass position + mass
     vector<double> origin; // origin of the node
     double halfDim; // half of the box length 
+    double theta; //cutoff parameter 
     node *quadrant[4]; // pointers to quadrants of the node 
 
   public:
-    node(const double halfDim, const vector<double> origin)
-      :origin(origin), halfDim(halfDim), particle_present(NULL){
+    node(const double halfDim, const vector<double> origin, const double theta)
+      :origin(origin), halfDim(halfDim), theta(theta), particle_present(NULL){
       for (int i=0; i<4; i++){
         quadrant[i] = NULL;
       }
@@ -34,16 +36,18 @@ class node{
     }
 
     //prototypes
-    bool isleafnode(void) const;
+    bool isexternalnode(void) const;
 
     int get_quadrant(const part* particle) const;
     
     void insert_particle(part* particle);
+
+    void calcforce(part* particle);
     
     void getpoints(vector<part*> &results);
 };
 
-bool node::isleafnode(void) const{
+bool node::isexternalnode(void) const{
   return quadrant[0]==NULL;
 }
 
@@ -58,7 +62,7 @@ int node::get_quadrant(const part* particle) const{
 }
 
 void node::insert_particle(part* particle){
-  if(isleafnode()){
+  if(isexternalnode()){
     if(particle_present == NULL){
       // if there pare no particles then we can put particle here
       particle_present = particle; 
@@ -89,7 +93,7 @@ void node::insert_particle(part* particle){
       for(int i=0; i<4; i++){
         origin_new[0] = origin[0] + ((i<2)?1:-1)*halfDim/sqrt(2);
         origin_new[1] = origin[1] + ((i==0||i==3)?1:-1)*halfDim/sqrt(2);
-        quadrant[i] = new node(halfDim_new, origin_new);
+        quadrant[i] = new node(halfDim_new, origin_new, theta);
       }
       
       // find quadrant where the points are and insert them in child nodes
@@ -117,14 +121,48 @@ void node::insert_particle(part* particle){
   }
 }
 
-double randU(){ // Random number between 1, -1
-  double r = 2*rand()/double(RAND_MAX) - 1;
-  return r; 
+// calculates forces particles/ CMs on a given particle
+void node::calcforce(part* particle){
+  if(isexternalnode()){
+    if(particle_present != particle){
+      // calculate force
+      double dx = particle->x - particle_present->x;
+      double dy = particle->y - particle_present->y;
+      double dist = sqrt(dx*dx + dy*dy);    
+      double m1 = particle_present->mass;
+      double m2 = particle->mass;
+
+      double force = - m1*m2/(dist*dist); // should be a vector..
+    }
+  }
+  else{
+    // calculate s/d<theta
+    double s = 2*halfDim; 
+    double dx = particle->x - CM.x;
+    double dy = particle->y - CM.y;
+    double m1 = CM.mass;
+    double m2 = particle->mass;
+    // calculate distance of particle to CM of node
+    double d = sqrt(dx*dx + dy*dy);
+
+    if ((s/d) < theta){
+      // treat node as a single particle, and calc force on particle based on
+      // this
+      double force = -m1*m2/d; //something like this, but a vector 
+    }
+    else
+    {
+      // continue recursively into child nodes
+      for(int i=0; i<4; i++){
+        quadrant[i] -> calcforce(particle);
+      }
+    }
+  }
 }
 
 //traverse the tree and collect points
 void node::getpoints(vector<part*> &results){
-  if(isleafnode()){
+  if(isexternalnode()){
     if(particle_present != NULL){
       results.push_back(particle_present);
     }
@@ -136,23 +174,32 @@ void node::getpoints(vector<part*> &results){
   }
 }
 
+double randU(){ // Returns a random number between 1, -1
+  double r = 2*rand()/double(RAND_MAX) - 1;
+  return r; 
+}
+
+// need routine that returns length, origin so that all particles are 
+// contained in it
 //double defbox(vector<pos> p){ 
 //}
 
 int main(void){
   vector<double> origin = {0,0};
-  node* root = new node(2,origin);
+  node* root = new node(2,origin, 0.5);
   
   vector<part> p;
-  int n = 100;
+  int n = 1000;
 
-  // insert particles into tree..
+  // make random particles (coords + masses)
   for(int i = 0; i<n; i++){
     p.push_back (part());
     p[i].x = randU(); //(i+1)/double(n);
     p[i].y = randU(); // (i+1)/double(n);
+    p[i].mass = 2 + randU();
   }
   
+  // insert particles into tree..
   for(int i = 0; i<n; i++){
     root -> insert_particle(&p[i]);
   }
@@ -162,5 +209,6 @@ int main(void){
   root -> getpoints(results);
   cout << results[1]->x << "\n";
   cout << results[1]->y << "\n";
+  cout << results[1]->mass << "\n";
   return 0;
 }
