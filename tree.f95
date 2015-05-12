@@ -1,15 +1,18 @@
 module objects
   implicit none
   
-  integer, parameter     :: dp = selected_real_kind(15,307)
-  integer, parameter     :: lng = selected_int_kind(8)
+  integer, parameter :: dp = selected_real_kind(15,307)
+  integer, parameter :: lng = selected_int_kind(8)
 
   type node
+    ! properties of the node
     real(dp) :: halfDim ! half side of the node
     real(dp) :: origin(2) ! origin of the node
-  
-    real(dp) :: loc(2) ! particle location
-    logical  :: contains_particle = .false.
+    real(dp) :: loc(2) ! node center of mass 
+    !(if 1 particle in node, this is just particle location) 
+    real(dp) :: mass   ! node mass (mass of all particles in node)
+
+    logical  :: contains_particle = .false. 
     logical  :: leaf_node = .true.
 
     ! pointers to 4 subnodes
@@ -20,6 +23,7 @@ module objects
   end type
 
 contains
+
   recursive subroutine insert_particle(p, N)
     type(node), pointer, intent(inout) :: N
     real(dp), intent(in)               :: p(2)
@@ -30,49 +34,48 @@ contains
     integer    :: i
 
     if (N%leaf_node) then
-      ! if we are in a leaf node, ie no child nodes
+      ! if we are in a leaf node there are no child nodes
       if (.not. N%contains_particle) then
-        ! put particle in this node
-        print *, 'test'
+        ! if no particles, just put particle in this node
         N%contains_particle = .true.
         N%loc = p
       else
+        ! otherwise we need to split up the node into quadrants, 
+        ! and try to put new point there, and move old point to
+        ! appropriate quadrant as well
+
         ! save position data
         p_old = N%loc
         N%leaf_node = .false.
 
-        ! allocate children probably doesnt work because of this, 
-        ! cant have multiple pointers with the same name?
-        allocate(child_1)
-        allocate(child_2)
-        allocate(child_3)
-        allocate(child_4)
+        ! allocate children 
+        allocate(child_1, child_2, child_3, child_4)
 
-        ! create pointers to children
+        ! assign pointers to children
         N%quadrant1 => child_1
         N%quadrant2 => child_2
         N%quadrant3 => child_3
         N%quadrant4 => child_4
 
+        ! determine new origins and box sizes for children
         child_1%origin(1) = N%origin(1) + N%halfDim/sqrt(2._dp) 
         child_1%origin(2) = N%origin(2) + N%halfDim/sqrt(2._dp) 
+        child_1%halfDim = N%halfDim/2._dp
 
         child_2%origin(1) = N%origin(1) + N%halfDim/sqrt(2._dp) 
         child_2%origin(2) = N%origin(2) - N%halfDim/sqrt(2._dp) 
+        child_2%halfDim = N%halfDim/2._dp
       
         child_3%origin(1) = N%origin(1) - N%halfDim/sqrt(2._dp) 
         child_3%origin(2) = N%origin(2) - N%halfDim/sqrt(2._dp) 
+        child_3%halfDim = N%halfDim/2._dp
 
         child_4%origin(1) = N%origin(1) - N%halfDim/sqrt(2._dp) 
         child_4%origin(2) = N%origin(2) + N%halfDim/sqrt(2._dp) 
-
-        child_1%halfDim = N%halfDim/2._dp
-        child_2%halfDim = N%halfDim/2._dp
-        child_3%halfDim = N%halfDim/2._dp
         child_4%halfDim = N%halfDim/2._dp
         
-        ! now we need to quadrant the points are in (p_old and p) and
-        ! insert them in the child nodes that we just created
+        ! now we find the quadrant the points are in (p_old and p) and
+        ! insert them in the appropriate child nodes that we just created
         call get_quadrant(p_old, N, Next_N1)
         call insert_particle(p_old, Next_N1)
 
@@ -80,8 +83,7 @@ contains
         call insert_particle(p, Next_N2)
       endif
     else
-      ! we are at an interior node,
-      ! insert p into one of its quadrants
+      ! we are at an interior node, insert p into one of its quadrants
       call get_quadrant(p, N, Next_N1)
       call insert_particle(p, Next_N1) 
     endif
@@ -95,10 +97,10 @@ contains
 
     if(p(1) > N%origin(1) .and. p(2) < N%origin(2)) then
       Next_N => N%quadrant2
-    elseif(p(1) < N%origin(1) .and. p(2) > N%origin(2)) then
-      Next_N => N%quadrant4
     elseif(p(1) < N%origin(1) .and. p(2) < N%origin(2)) then
       Next_N => N%quadrant3
+    elseif(p(1) < N%origin(1) .and. p(2) > N%origin(2)) then
+      Next_N => N%quadrant4
     else 
       Next_N => N%quadrant1
     endif
@@ -118,6 +120,15 @@ contains
       call getpoints(N%quadrant4)
     endif
   end subroutine
+
+  subroutine mkbox(p, N)
+    ! initiates box with correct dimensions, origin for root 
+    real(dp), intent(in) :: p(:,:)
+    type(node), pointer  :: N
+
+    N%halfDim = 1.1_dp*max(maxval(abs(p(:,1))), maxval(abs(p(:,2))))
+    N%origin  = [0._dp, 0._dp]
+  end subroutine
 end module
 
 program tree
@@ -126,23 +137,24 @@ program tree
   
   ! first node: the root of the tree
   type(node), pointer   :: root 
-  ! bunch of points
-  real(dp)              :: p1(2), p2(2), p3(2), p4(2)
+  ! list of points
+  real(dp), allocatable :: p(:,:)
 
-  allocate(root)
-  ! need routine to determine these from point data
-  root%halfDim = 2._dp
-  root%origin  = [0._dp, 0._dp]
+  allocate(root, p(4,2))
 
-  ! add a bunch of particles 
-  p1 = [1._dp, 0.5_dp]
-  p2 = [0.5_dp, 1._dp]
-  p3 = [0.4_dp, 1.1_dp]
-  p4 = [1._dp, 0.2_dp]
-
-  call insert_particle(p1, root)
-  call insert_particle(p2, root)
-  call insert_particle(p3, root)
-  call insert_particle(p4, root)
+  p(1,:) = [1._dp, 0.5_dp]
+  p(2,:) = [0.5_dp, 1._dp]
+  p(3,:) = [0.4_dp, 1.1_dp]
+  p(4,:) = [1._dp, 0.2_dp]
+  
+  ! create root box that can hold all coords
+  call mkbox(p, root)
+  
+  ! add a bunch of particles to tree
+  call insert_particle(p(1,:), root)
+  call insert_particle(p(2,:), root)
+  call insert_particle(p(3,:), root)
+  call insert_particle(p(4,:), root)
+  ! and read them again
   call getpoints(root)
 end program
