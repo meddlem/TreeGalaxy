@@ -42,7 +42,7 @@ class node{
     
     void insert_particle(part* particle);
 
-    void calcforce(part* particle);
+    void calcforce(part* particle, vector<vector<double>*> &forces);
     
     void getpoints(vector<part*> &results);
 };
@@ -122,17 +122,22 @@ void node::insert_particle(part* particle){
 }
 
 // calculates forces particles/ CMs on a given particle
-void node::calcforce(part* particle){
+void node::calcforce(part* particle, vector<vector<double>*> &forces){
   if(isexternalnode()){
     if(particle_present != particle){
       // calculate force
       double dx = particle->x - particle_present->x;
       double dy = particle->y - particle_present->y;
-      double dist = sqrt(dx*dx + dy*dy);    
+      double d = sqrt(dx*dx + dy*dy);    
       double m1 = particle_present->mass;
       double m2 = particle->mass;
-
-      double force = - m1*m2/(dist*dist); // should be a vector..
+      
+      vector<double> force(2);
+      force[0]= -dx*m1*m2/(d*d); // should be a vector..
+      force[1]= -dy*m1*m2/(d*d); // should be a vector..
+      
+      // push force vector into list containing all force vectors..
+      forces.push_back(&force);
     }
   }
   else{
@@ -148,13 +153,18 @@ void node::calcforce(part* particle){
     if ((s/d) < theta){
       // treat node as a single particle, and calc force on particle based on
       // this
-      double force = -m1*m2/d; //something like this, but a vector 
+      vector<double> force(2);
+      force[0]= -dx*m1*m2/(d*d); // should be a vector..
+      force[1]= -dy*m1*m2/(d*d); // should be a vector..
+
+      // push force vector into list containing all force vectors..
+      forces.push_back(&force);
     }
     else
     {
       // continue recursively into child nodes
       for(int i=0; i<4; i++){
-        quadrant[i] -> calcforce(particle);
+        quadrant[i] -> calcforce(particle, forces);
       }
     }
   }
