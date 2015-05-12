@@ -54,23 +54,18 @@ contains
         N%quadrant3 => child_3
         N%quadrant4 => child_4
 
-        do i = 1,4
-          neworigin(1) = N%origin(1) + &
-            N%halfDim/sqrt(2._dp) * merge(1, -1, i == 1 .or. i == 4)
-          neworigin(2) = N%origin(2) + &
-            N%halfDim/sqrt(2._dp) * merge(1, -1, i < 3)
-          
-          if (i == 1) then
-            child_1%origin = neworigin
-          elseif (i == 2) then 
-            child_2%origin = neworigin
-          elseif (i == 3) then 
-            child_3%origin = neworigin
-          else 
-            child_4%origin = neworigin
-          endif
-        enddo
-        
+        child_1%origin(1) = N%origin(1) + N%halfDim/sqrt(2._dp) 
+        child_1%origin(2) = N%origin(2) + N%halfDim/sqrt(2._dp) 
+
+        child_2%origin(1) = N%origin(1) + N%halfDim/sqrt(2._dp) 
+        child_2%origin(2) = N%origin(2) - N%halfDim/sqrt(2._dp) 
+      
+        child_3%origin(1) = N%origin(1) - N%halfDim/sqrt(2._dp) 
+        child_3%origin(2) = N%origin(2) - N%halfDim/sqrt(2._dp) 
+
+        child_4%origin(1) = N%origin(1) - N%halfDim/sqrt(2._dp) 
+        child_4%origin(2) = N%origin(2) + N%halfDim/sqrt(2._dp) 
+
         child_1%halfDim = N%halfDim/2._dp
         child_2%halfDim = N%halfDim/2._dp
         child_3%halfDim = N%halfDim/2._dp
@@ -148,6 +143,6 @@ program tree
   call insert_particle(p1, root)
   call insert_particle(p2, root)
   call insert_particle(p3, root)
-  !call insert_particle(p4, root)
-  !call getpoints(root)
+  call insert_particle(p4, root)
+  call getpoints(root)
 end program
