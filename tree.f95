@@ -8,9 +8,8 @@ module objects
     ! properties of the node
     real(dp) :: halfDim ! half side of the node
     real(dp) :: origin(2) ! origin of the node
-    real(dp) :: loc(2) ! node center of mass 
+    real(dp) :: particle(2) ! particle location
     real(dp) :: CM(2) ! node center of mass 
-    !(if 1 particle in node, this is just particle location) 
     real(dp) :: mass = 0._dp  ! node mass (mass of all particles in node)
 
     logical  :: contains_particle = .false. 
@@ -108,18 +107,38 @@ contains
     endif
   end subroutine
 
-  recursive subroutine getpoints(N)
+  recursive subroutine getforce(N,p,F)
     ! lists locations of particles contained in the tree
-    type(node), pointer :: N
+    real(dp), pointer    :: F 
+    real(dp), intent(in) :: p(:)
+    type(node), pointer  :: N
 
-    if (N%leaf_node .and. N%contains_particle) then
-      print *, N%loc
-    elseif(.not. N%leaf_node) then
-      ! call recursively until we reach the leaf
-      call getpoints(N%quadrant1)
-      call getpoints(N%quadrant2)
-      call getpoints(N%quadrant3)
-      call getpoints(N%quadrant4)
+    real(dp) :: dr(2), d, m1, m2
+
+    if (N%leaf_node) then
+      if (N%contains_particle) then
+        dr = p - N%particle 
+        d = sqrt(sum(dr**2));
+        if (d<0.0001) then
+          F = F
+        else
+          F = F - dr*m1*m2/d**3
+        endif
+      endif
+    else 
+      dr = p - N%CM;  
+      d = sqrt(sum(dr**2));
+
+      if (N%halfDim/d < 0.5_dp) then
+        m1 = N%mass
+        m2 = 1._dp
+        F = F - dr*m1*m2/d**3
+      else
+        call getforce(N%quadrant1,p,F)
+        call getforce(N%quadrant2,p,F)
+        call getforce(N%quadrant3,p,F)
+        call getforce(N%quadrant4,p,F)
+      endif
     endif
   end subroutine
 
@@ -130,13 +149,6 @@ contains
 
     N%halfDim = 1.1_dp*max(maxval(abs(p(:,1))), maxval(abs(p(:,2))))
     N%origin  = [0._dp, 0._dp]
-  end subroutine
-
-  subroutine get_rel_distance(p0, N, d)
-    real(dp), intent(in)    :: p0(:)
-    real(dp), intent(inout) :: d(:, :)
-    type(node), pointer     :: N
-
   end subroutine
 end module
 
