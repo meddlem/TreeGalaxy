@@ -1,5 +1,6 @@
 module plotroutines
   use constants
+  use treestructs
   use plplot
   implicit none
   private
@@ -24,14 +25,21 @@ contains
  
   subroutine particle_plot(r)
     ! plots all particle position
-    real(dp), intent(in) :: r(:,:) 
+    type(part), intent(in) :: r(:) 
+    
+    real(dp) :: r_p(N,3)
+    integer :: i
+    ! convert part type to regular double array
+    do i = 1,N
+      r_p(i,:) = r(i)%pos
+    enddo
    
     call plclear()
     call plcol0(1) !axis color
     call plbox3("bnstu", "x", 0._dp, 0, "bnstu", "y", 0._dp, 0, "bcdmnstuv", "z", &
       0._dp, 0) !plots the axes etc
     call plcol0(3) !point color
-    call plpoin3(r(:,1), r(:,2), r(:,3), 4) !this plots the points
+    call plpoin3(r_p(:,1), r_p(:,2), r_p(:,3), 4) !this plots the points
     call plflush()
   end subroutine
   

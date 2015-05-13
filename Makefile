@@ -13,6 +13,7 @@ PROG = main #program name
 #required objects: 
 OBJS =
 OBJS += constants.o
+OBJS += treestructs.o
 OBJS += tree.o
 OBJS += io.o
 OBJS += initialize.o

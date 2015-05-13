@@ -1,7 +1,7 @@
 program main
   ! modules to use 
   use constants 
-  use tree
+  use treestructs
   use io
   use initialize 
   use main_functions 
@@ -12,7 +12,7 @@ program main
 
   real(dp), allocatable   :: p(:,:), F(:,:) 
   type(part), allocatable :: r(:)
-  real(dp) :: L, rho, T_init
+  real(dp) :: L, rho, T_init, test
   integer :: i, j
   ! allocate large arrays
   allocate(r(N), p(N,3), F(N,3))
@@ -27,18 +27,24 @@ program main
   call init_r(r,L)
   call init_p(p,T_init)
   call force(F,r)
-  if(prtplt) call particle_plot_init(-10._dp*L,10._dp*L)
+  if(prtplt) call particle_plot_init(-0.1_dp*L,1.1_dp*L)
   
   ! central part of simulation
   do i = 1,steps
     ! plot particle positions
-    !if (prtplt .or. mod(i,10) == 0) call particle_plot(r) 
+    call particle_plot(r) 
      
     ! time integration using the "velocity Verlet" algorithm: 
+    test = 0._dp
     do j = 1,N
       r(j)%pos = r(j)%pos + p(j,:)*dt + 0.5_dp*F(j,:)*(dt**2) ! update positions
+      if (maxval(r(j)%pos)>test) then
+        test =  maxval(r(j)%pos)
+      endif
     enddo
+    print *, test
     p = p + 0.5_dp*F*dt ! update momentum (1/2)
+    call particle_plot(r) 
     call force(F,r) ! update force
     p = p + 0.5_dp*F*dt ! update momentum (2/2)
   enddo

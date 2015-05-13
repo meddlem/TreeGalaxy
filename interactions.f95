@@ -1,6 +1,6 @@
 module interactions
   use constants
-  use omp_lib
+  use treestructs
   use tree
   implicit none
   private 
@@ -9,7 +9,7 @@ module interactions
 contains
   subroutine force(F, r)
     ! computes net force on particles
-    real(dp), intent(out)   :: F(:,:)
+    real(dp), intent(inout)   :: F(:,:)
     type(part), intent(in)  :: r(:)
 
     type(node), pointer :: root 
@@ -31,5 +31,6 @@ contains
     do i = 1,N 
       call getforce(root,r(i),F(i,:))
     enddo
+    deallocate(root)
   end subroutine
 end module 

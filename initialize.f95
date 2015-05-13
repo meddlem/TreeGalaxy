@@ -1,6 +1,6 @@
 module initialize
   use constants
-  use tree
+  use treestructs
   implicit none
   private
   public :: init_p, init_r
