@@ -13,7 +13,7 @@ struct part {
 
 class node{
   private:
-    part *particle_present;
+    part *particle_present; //contains particle locaction if node is external
     part CM; // center of mass position + mass
     vector<double> origin; // origin of the node
     double halfDim; // half of the box length 
@@ -37,13 +37,9 @@ class node{
 
     //prototypes
     bool isexternalnode(void) const;
-
     int get_quadrant(const part* particle) const;
-    
     void insert_particle(part* particle);
-
-    void calcforce(part* particle, vector<vector<double>*> &forces);
-    
+    void calcforce(part* particle, double* force);
     void getpoints(vector<part*> &results);
 };
 
@@ -122,7 +118,7 @@ void node::insert_particle(part* particle){
 }
 
 // calculates forces particles/ CMs on a given particle
-void node::calcforce(part* particle, vector<vector<double>*> &forces){
+void node::calcforce(part* particle, double *force){
   if(isexternalnode()){
     if((particle_present != NULL) && (particle_present !=particle)){ 
       // dit laatste kan problemen geven, check met sarwan
@@ -135,16 +131,16 @@ void node::calcforce(part* particle, vector<vector<double>*> &forces){
       double m2 = particle->mass;
       
       vector<double> force(2);
-      force[0]= -dx*m1*m2/(d*d); 
-      force[1]= -dy*m1*m2/(d*d); 
+      force[0] = force[0] - dx*m1*m2/(d*d); 
+      force[1] = force[1] - dy*m1*m2/(d*d); 
       
       // push force vector into list containing all force vectors..
-      forces.push_back(&force);
+      //forces.push_back(&force);
     }
   }
   else{
     // calculate s/d<theta
-    double s = 2*halfDim; 
+    double s = halfDim; 
     double dx = particle->x - CM.x;
     double dy = particle->y - CM.y;
     double m1 = CM.mass;
@@ -155,18 +151,18 @@ void node::calcforce(part* particle, vector<vector<double>*> &forces){
     if ((s/d) < theta){
       // treat node as a single particle, and calc force on particle based on
       // this
-      vector<double> force(2);
-      force[0]= -dx*m1*m2/(d*d); // should be a vector..
-      force[1]= -dy*m1*m2/(d*d); // should be a vector..
+      vector<double> temp_force(2);
 
       // push force vector into list containing all force vectors..
-      forces.push_back(&force);
+      //forces.push_back(&force);
+      force[0] = force[0] - dx*m1*m2/(d*d);
+      force[1] = force[1] - dy*m1*m2/(d*d); 
     }
     else
     {
       // continue recursively into child nodes
       for(int i=0; i<4; i++){
-        quadrant[i] -> calcforce(particle, forces);
+        quadrant[i] -> calcforce(particle, force);
       }
     }
   }
@@ -208,7 +204,7 @@ int main(void){
     p.push_back (part());
     p[i].x = randU(); //(i+1)/double(n);
     p[i].y = randU(); // (i+1)/double(n);
-    p[i].mass = 2 + randU();
+    p[i].mass = 1;// + randU();
   }
   
   // insert particles into tree..
@@ -217,19 +213,13 @@ int main(void){
   }
 
   // return list of results
-  vector<part*> results;
-  root -> getpoints(results);
+  //vector<part*> results;
+  //root -> getpoints(results);
 
-  // print 1 of them as a check 
-  cout << results[1]->x << "\n";
-  cout << results[1]->y << "\n";
-  cout << results[1]->mass << "\n";
-  
-  // calc forces on 1st particle?
-  vector<vector<double>*> forces;
-  root -> calcforce(&p[0],forces);
+  // calc total force on 1 particle, by all others
+  double force[2];
+  root -> calcforce(&p[n-1],force);
 
-  double test = (*forces[0])[1];
-  cout << test << "\n";
+  cout << "(" << force[0] << " , "<< force[1] << ")" << "\n";
   return 0;
 }
