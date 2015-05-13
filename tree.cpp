@@ -50,8 +50,9 @@ bool node::isexternalnode(void) const{
 }
 
 int node::get_octant(const part* particle) const{
-  // determine in which octant of the node a particle is located
+  // determine in which octant of the node a particle is located, the dumb way
   int oct = 0;
+  
   if((particle->x > origin[0]) && (particle->y < origin[1]) && (particle->z > origin[2])){oct = 1;}
   else if((particle->x < origin[0]) && (particle->y < origin[1]) && (particle->z > origin[2])){oct = 2;}
   else if((particle->x < origin[0]) && (particle->y > origin[1]) && (particle->z > origin[2])){oct = 3;}
@@ -143,9 +144,9 @@ void node::calcforce(part* particle, double *force){
       double m2 = particle->mass;
       
       // update total force
-      force[0] = force[0] - dx*m1*m2/(d*d); 
-      force[1] = force[1] - dy*m1*m2/(d*d); 
-      force[2] = force[2] - dz*m1*m2/(d*d); 
+      force[0] = force[0] - dx*m1*m2/(d*d*d); 
+      force[1] = force[1] - dy*m1*m2/(d*d*d); 
+      force[2] = force[2] - dz*m1*m2/(d*d*d); 
     }
   }
   else{
@@ -162,9 +163,9 @@ void node::calcforce(part* particle, double *force){
       double m2 = particle->mass;
 
       // update total force
-      force[0] = force[0] - dx*m1*m2/(d*d);
-      force[1] = force[1] - dy*m1*m2/(d*d); 
-      force[2] = force[2] - dz*m1*m2/(d*d); 
+      force[0] = force[0] - dx*m1*m2/(d*d*d);
+      force[1] = force[1] - dy*m1*m2/(d*d*d); 
+      force[2] = force[2] - dz*m1*m2/(d*d*d); 
     }
     else
     {
@@ -191,7 +192,7 @@ int main(void){
   node* root = new node(2,origin, 0.5);
   
   vector<part> p;
-  int n = 1000;
+  int n = 10000;
 
   // make random particles (coords + masses)
   for(int i = 0; i<n; i++){
@@ -207,13 +208,9 @@ int main(void){
     root -> insert_particle(&p[i]);
   }
 
-  // return list of results
-  //vector<part*> results;
-  //root -> getpoints(results);
-
-  // calc total force on 1 particle, by all others
+  // calc total force on 1 particle, by all others, make this a vector again?
   double force[3];
-  root -> calcforce(&p[n-1],force);
+  root -> calcforce(&p[1],force);
 
   cout << "(" << force[0] << " , "<< force[1] << " , " << force[2] << ")" << "\n";
   return 0;
