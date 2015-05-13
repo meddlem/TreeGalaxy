@@ -4,13 +4,17 @@ module objects
   integer, parameter :: dp = selected_real_kind(15,307)
   integer, parameter :: lng = selected_int_kind(8)
 
+  type part
+    real(dp) :: pos(2);
+    real(dp) :: mass;
+  end type
+
   type node
     ! properties of the node
     real(dp) :: halfDim ! half side of the node
     real(dp) :: origin(2) ! origin of the node
-    real(dp) :: particle(2) ! particle location
-    real(dp) :: CM(2) ! node center of mass 
-    real(dp) :: mass = 0._dp  ! node mass (mass of all particles in node)
+    type(part) :: particle ! particle location
+    type(part) :: CM ! node center of mass 
 
     logical  :: contains_particle = .false. 
     logical  :: leaf_node = .true.
@@ -26,11 +30,12 @@ contains
 
   recursive subroutine insert_particle(p, N)
     type(node), pointer, intent(inout) :: N
-    real(dp), intent(in)               :: p(2)
+    type(part), intent(in)             :: p
 
     type(node), pointer :: child_1, child_2, child_3, child_4, Next_N1, &
       Next_N2
-    real(dp)   :: neworigin(2), p_old(2)
+    real(dp)   :: neworigin(2), Madd, Mnew, Mold
+    type(part) :: p_old 
     integer    :: i
 
     if (N%leaf_node) then
@@ -38,16 +43,24 @@ contains
       if (.not. N%contains_particle) then
         ! if no particles, just put particle in this node
         N%contains_particle = .true.
-        N%mass = N%mass + p%mass 
-        N%CM = p
+        N%CM = p 
       else
         ! otherwise we need to split up the node into quadrants, 
         ! and try to put new point there, and move old point to
         ! appropriate quadrant as well
 
         ! save position data
-        p_old = N%loc
+        p_old = N%particle
         N%leaf_node = .false.
+        N%contains_particle = .false.
+        ! add mass to node
+        Mold = N%CM%mass
+        Madd = p%mass
+        Mnew = Mold + Madd
+        ! update center of mass position
+        N%CM%pos = (Mold*N%CM%pos + Madd*p%pos)/Mnew
+        ! update mass of node
+        N%CM%mass = Mnew
 
         ! allocate children 
         allocate(child_1, child_2, child_3, child_4)
@@ -85,6 +98,15 @@ contains
       endif
     else
       ! we are at an interior node, insert p into one of its quadrants
+      ! still need to update CM though
+      Mold = N%CM%mass
+      Madd = p%mass
+      Mnew = Mold + Madd
+      ! update center of mass position
+      N%CM%pos = (Mold*N%CM%pos + Madd*p%pos)/Mnew
+      ! update mass of node
+      N%CM%mass = Mnew
+
       call get_quadrant(p, N, Next_N1)
       call insert_particle(p, Next_N1) 
     endif
@@ -92,15 +114,15 @@ contains
 
   subroutine get_quadrant(p, N, Next_N)
     ! returns pointer to quadrant where p is located
-    type(node), pointer  :: Next_N
-    type(node), pointer  :: N
-    real(dp), intent(in) :: p(2)
+    type(node), pointer    :: Next_N
+    type(node), pointer    :: N
+    type(part), intent(in) :: p
 
-    if(p(1) > N%origin(1) .and. p(2) < N%origin(2)) then
+    if(p%pos(1) > N%origin(1) .and. p%pos(2) < N%origin(2)) then
       Next_N => N%quadrant2
-    elseif(p(1) < N%origin(1) .and. p(2) < N%origin(2)) then
+    elseif(p%pos(1) < N%origin(1) .and. p%pos(2) < N%origin(2)) then
       Next_N => N%quadrant3
-    elseif(p(1) < N%origin(1) .and. p(2) > N%origin(2)) then
+    elseif(p%pos(1) < N%origin(1) .and. p%pos(2) > N%origin(2)) then
       Next_N => N%quadrant4
     else 
       Next_N => N%quadrant1
@@ -109,29 +131,32 @@ contains
 
   recursive subroutine getforce(N,p,F)
     ! lists locations of particles contained in the tree
-    real(dp), pointer    :: F 
-    real(dp), intent(in) :: p(:)
-    type(node), pointer  :: N
+    real(dp),   intent(inout) :: F(:)
+    type(part), intent(in)    :: p
+    type(node), pointer       :: N
 
     real(dp) :: dr(2), d, m1, m2
 
     if (N%leaf_node) then
       if (N%contains_particle) then
-        dr = p - N%particle 
+        m1 = N%particle%mass
+        m2 = p%mass
+        dr = p%pos - N%particle%pos
+
         d = sqrt(sum(dr**2));
-        if (d<0.0001) then
+        if (d<0.0001) then ! if particles are too close ignore
           F = F
         else
           F = F - dr*m1*m2/d**3
         endif
       endif
     else 
-      dr = p - N%CM;  
+      dr = p%pos - N%CM%pos;  
       d = sqrt(sum(dr**2));
 
       if (N%halfDim/d < 0.5_dp) then
-        m1 = N%mass
-        m2 = 1._dp
+        m1 = N%CM%mass
+        m2 = p%mass
         F = F - dr*m1*m2/d**3
       else
         call getforce(N%quadrant1,p,F)
@@ -159,24 +184,31 @@ program tree
   ! first node: the root of the tree
   type(node), pointer   :: root 
   ! list of points
-  real(dp), allocatable :: p(:,:)
+  type(part) :: p1, p2, p3, p4
+  real(dp)   :: F(3) = 0._dp
+  allocate(root)
 
-  allocate(root, p(4,2))
+  p1%pos = [0._dp, 0._dp]
+  p1%mass = 1._dp
+  p2%pos = [1._dp, 0._dp]
+  p2%mass = 1._dp
+  p3%pos = [-1._dp, 0._dp]
+  p3%mass = 1._dp
+  p4%pos = [1._dp, 0.2_dp]
+  p4%mass = 0._dp
 
-  p(1,:) = [1._dp, 0.5_dp]
-  p(2,:) = [0.5_dp, 1._dp]
-  p(3,:) = [0.4_dp, 1.1_dp]
-  p(4,:) = [1._dp, 0.2_dp]
+  root%halfDim = 2._dp
+  root%origin = [0._dp, 0._dp]
   
   ! create root box that can hold all coords
-  call mkbox(p, root)
+  !call mkbox(p, root)
   
   ! add a bunch of particles to tree
-  call insert_particle(p(1,:), root)
-  call insert_particle(p(2,:), root)
-  call insert_particle(p(3,:), root)
-  call insert_particle(p(4,:), root)
-  ! and read them again
-  call getpoints(root)
-  ! get relative distances from point p_0 to all points in tree
+  call insert_particle(p1, root)
+  call insert_particle(p2, root)
+  call insert_particle(p3, root)
+  call insert_particle(p4, root)
+
+  call getforce(root,p1,F)
+  print *, F
 end program
