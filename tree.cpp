@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
+#include <time.h>
 
 using namespace std;
 
@@ -208,10 +209,15 @@ int main(void){
     root -> insert_particle(&p[i]);
   }
 
+  clock_t t1 = clock();
   // calc total force on 1 particle, by all others, make this a vector again?
-  double force[3];
-  root -> calcforce(&p[1],force);
+  double force[n][3];
+  for(int i = 0; i < n; i++){
+    root -> calcforce(&p[i],force[i]);
+  }
+  clock_t t2 = clock();
+  cout << double((t2-t1))/CLOCKS_PER_SEC << "\n";
 
-  cout << "(" << force[0] << " , "<< force[1] << " , " << force[2] << ")" << "\n";
+  cout << "(" << force[0][0] << " , "<< force[1][0] << " , " << force[2][0] << ")" << "\n";
   return 0;
 }
