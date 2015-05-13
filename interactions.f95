@@ -31,6 +31,9 @@ contains
     do i = 1,N 
       call getforce(root,r(i),F(i,:))
     enddo
+    if (maxval(F) > 100000._dp) then
+      print *, "help"
+    endif
     deallocate(root)
   end subroutine
 end module 

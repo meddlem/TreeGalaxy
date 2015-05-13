@@ -9,11 +9,11 @@ module constants
   real(dp), parameter :: pi = 4._dp*atan(1._dp) 
 
   real(dp), parameter :: dt = 0.05_dp 
-  real(dp), parameter :: eps = 0.001_dp ! softening parameter 
+  real(dp), parameter :: eps = 0.025_dp ! softening parameter 
   real(dp), parameter :: theta = 0.5_dp ! cutoff 
   
   integer, parameter :: steps = 30000
-  integer, parameter :: N = 14**3*4
+  integer, parameter :: N = 23802
   
   logical, parameter :: prtplt = .true.
 end module

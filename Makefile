@@ -15,11 +15,9 @@ OBJS =
 OBJS += constants.o
 OBJS += treestructs.o
 OBJS += tree.o
-OBJS += io.o
 OBJS += initialize.o
 OBJS += interactions.o
 OBJS += plotroutines.o
-OBJS += main_functions.o
 OBJS += main.o
 
 all: $(PROG)
