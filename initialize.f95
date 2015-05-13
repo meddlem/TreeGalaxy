@@ -14,6 +14,7 @@ contains
 
     r%mass = 0.01_dp !masses
 
+    ! read data from Sellwood 1993
     open(10, file='stars.dat')
       do i=1,N
         read(10,*) r(i)%pos(3), r(i)%pos(2), r(i)%pos(1), &
