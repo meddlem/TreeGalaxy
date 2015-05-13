@@ -1,9 +1,8 @@
 #include "init.h"
-#include "header.h"
 
 using namespace std;
 
-Npart::Npart(int N_total):
+universe::universe(int N_total):
 N(0)
 {
 	pos_mass.resize(N_total);
@@ -14,7 +13,7 @@ double frand(double low, double high){
 	return low + (double)rand() * (high - low) / (double)RAND_MAX;
 }
 
-void Npart::generate_gal(int N_stars, part gal_pos_mass, part_vel gal_vel)
+void universe::generate_gal(int N_stars, part gal_pos_mass, part_vel gal_vel)
 {
 
 	int N_old = N;
@@ -67,7 +66,7 @@ void Npart::generate_gal(int N_stars, part gal_pos_mass, part_vel gal_vel)
 
 }
 
-void Npart::print2file(){
+void universe::print2file(){
 	ofstream file;
 		file.open ("galaxy.txt");
 		for (int i = 0; i < N; ++i)
