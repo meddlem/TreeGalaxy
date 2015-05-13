@@ -1,5 +1,6 @@
 module initialize
   use constants
+  use tree
   implicit none
   private
   public :: init_p, init_r
@@ -7,12 +8,14 @@ module initialize
 contains
   subroutine init_r(r,L) 
     ! gives initial positions based on FCC lattice
-    real(dp), intent(out) :: r(N,3)
+    type(part), intent(inout) :: r(:)
     real(dp), intent(in) :: L
     integer :: i, j, k, atom, S, M
     real(dp) :: a, unitcell(4,3)
 
-    unitcell(:,:) = 0._dp !initialize unitcell 
+    r%mass = 1._dp !masses
+    
+    unitcell = 0._dp !initialize unitcell 
     a = L/((N/4)**(1._dp/3._dp)) ! calculate lattice constant
 
     ! define unit cell of the FCC lattice (only nonzero coordinates) 
@@ -29,7 +32,7 @@ contains
       do j = 0,M-1
         do k = 0,M-1
           do atom = 1,4
-            r(atom+S,:) = unitcell(atom,:) + a*real([i,j,k],kind=dp)
+            r(atom+S)%pos = unitcell(atom,:) + a*real([i,j,k],kind=dp)
           enddo
           S = S+4
         enddo

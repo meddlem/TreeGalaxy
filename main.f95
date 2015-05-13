@@ -1,6 +1,7 @@
 program main
   ! modules to use 
   use constants 
+  use tree
   use io
   use initialize 
   use main_functions 
@@ -9,11 +10,12 @@ program main
   use plplot, only : plend  
   implicit none
 
-  real(dp), allocatable :: r(:,:), r_0(:,:), p(:,:), p_0(:,:), F(:,:) 
+  real(dp), allocatable   :: p(:,:), F(:,:) 
+  type(part), allocatable :: r(:)
   real(dp) :: L, rho, T_init
-  integer :: i
+  integer :: i, j
   ! allocate large arrays
-  allocate(r(N,3), r_0(N,3), p(N,3), p_0(N,3), F(N,3))
+  allocate(r(N), p(N,3), F(N,3))
   
   ! get required userinput 
   call user_in(rho,T_init)  
@@ -30,17 +32,15 @@ program main
   ! central part of simulation
   do i = 1,steps
     ! plot particle positions
-    if (prtplt .or. mod(i,10) == 0) call particle_plot(r) 
+    !if (prtplt .or. mod(i,10) == 0) call particle_plot(r) 
      
     ! time integration using the "velocity Verlet" algorithm: 
-    !r = r + p*dt + 0.5_dp*F*(dt**2) ! update positions
-    !p = p + 0.5_dp*F*dt ! update momentum (1/2)
-    !call force(F,r) ! update force
-    !p = p + 0.5_dp*F*dt ! update momentum (2/2)
-    ! leapfrog 
-    r = r + 0.5_dp*p*dt
+    do j = 1,N
+      r(j)%pos = r(j)%pos + p(j,:)*dt + 0.5_dp*F(j,:)*(dt**2) ! update positions
+    enddo
+    p = p + 0.5_dp*F*dt ! update momentum (1/2)
     call force(F,r) ! update force
-    p = p + F*dt
+    p = p + 0.5_dp*F*dt ! update momentum (2/2)
   enddo
   
   call plend()
