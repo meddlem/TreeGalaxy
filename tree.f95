@@ -156,28 +156,26 @@ contains
     real(dp) :: dr(3), d, m1, m2
 
     if (M%leaf_node) then
-      if (M%contains_particle) then
+      if (M%contains_particle .and. (p%pos(1) /= M%particle%pos(1))) then
         m1 = M%particle%mass
         m2 = p%mass
+        ! calc distance between particles
         dr = p%pos - M%particle%pos
-
         d = sqrt(sum(dr**2));
 
         if (d>0.001_dp) then ! if particles are too close ignore
-          F = F - dr*m1*m2/d**3
+          F = F - dr*m1*m2/(d**2+eps**2)**1.5_dp
         endif
       endif
     else 
       dr = p%pos - M%CM%pos;  
       d = sqrt(sum(dr**2));
 
-      if (M%halfDim/d < 0.5_dp) then
+      if (M%halfDim/d < theta) then
+        ! we treat the node as a single particle 
         m1 = M%CM%mass
         m2 = p%mass
-        F = F - dr*m1*m2/d**3
-        if (F(1)>10000._dp) then
-          print *, m1 
-        endif
+        F = F - dr*m1*m2/(d**2 + eps**2)**1.5_dp
       else
         call getforce(M%octant1,p,F)
         call getforce(M%octant2,p,F)
@@ -201,31 +199,3 @@ contains
     M%origin  = [0._dp, 0._dp, 0._dp]
   end subroutine
 end module
-
-!program tree
-!  use objects
-!  implicit none
-  
-  ! first node: the root of the tree
-!  type(node), pointer :: root 
-  ! list of points
-!  type(part), allocatable :: p(:)
-!  real(dp), allocatable   :: F(:,:)
-!  integer :: i, N = 1000
-!  allocate(root, p(N), F(3,N))
-
-  ! set force to 0
-!  F = 0._dp
-
-!  call mkbox(p, root)
-  
-  ! add a bunch of particles to tree
-!  do i = 1,N 
-!    call insert_particle(p(i), root)
-!  enddo
-  
-  ! calculate forces
-!  do i = 1,N 
-!    call getforce(root,p(i),F(:,i))
-!  enddo
-!end program

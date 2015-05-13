@@ -6,12 +6,14 @@ module constants
   ! NOTE: IF YOU MAKE ANY CHANGES HERE RECOMPILE ALL MODULES: "make -B" 
   integer, parameter :: dp = selected_real_kind(15,307)
   integer, parameter :: lng = selected_int_kind(8)
-
-  real(dp), parameter :: dt = 0.01_dp 
   real(dp), parameter :: pi = 4._dp*atan(1._dp) 
+
+  real(dp), parameter :: dt = 0.05_dp 
+  real(dp), parameter :: eps = 0.001_dp ! softening parameter 
+  real(dp), parameter :: theta = 0.5_dp ! cutoff 
   
   integer, parameter :: steps = 30000
-  integer, parameter :: N = 8**3*4
+  integer, parameter :: N = 14**3*4
   
   logical, parameter :: prtplt = .true.
 end module

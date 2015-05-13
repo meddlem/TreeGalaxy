@@ -33,18 +33,15 @@ program main
   do i = 1,steps
     ! plot particle positions
     call particle_plot(r) 
+    print *, i
      
     ! time integration using the "velocity Verlet" algorithm: 
     test = 0._dp
     do j = 1,N
       r(j)%pos = r(j)%pos + p(j,:)*dt + 0.5_dp*F(j,:)*(dt**2) ! update positions
-      if (maxval(r(j)%pos)>test) then
-        test =  maxval(r(j)%pos)
-      endif
     enddo
-    print *, test
     p = p + 0.5_dp*F*dt ! update momentum (1/2)
-    call particle_plot(r) 
+    !call particle_plot(r) 
     call force(F,r) ! update force
     p = p + 0.5_dp*F*dt ! update momentum (2/2)
   enddo
