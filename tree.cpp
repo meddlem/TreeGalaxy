@@ -193,7 +193,7 @@ int main(void){
   node* root = new node(2,origin, 0.5);
   
   vector<part> p;
-  int n = 10000;
+  int n = 100000;
 
   // make random particles (coords + masses)
   for(int i = 0; i<n; i++){
