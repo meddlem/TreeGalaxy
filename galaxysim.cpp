@@ -44,7 +44,7 @@ void Update_force(){
   vector<double> origin = {0,0,0};
   double rootsz = rootsize();
   cout << rootsz << "\n";
-  node* root = new node(rootsz, origin, 0.5);
+  node* root = new node(rootsz, origin, 0.5, 0.025);
 
   // insert particles into tree
   for(int i = 0; i<N; i++){

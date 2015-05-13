@@ -15,13 +15,20 @@ int node::get_octant(const part* particle) const{
   // determine in which octant of the node a particle is located, the dumb way
   int oct = 0;
   
-  if((particle->x > origin[0]) && (particle->y < origin[1]) && (particle->z > origin[2])){oct = 1;}
-  else if((particle->x < origin[0]) && (particle->y < origin[1]) && (particle->z > origin[2])){oct = 2;}
-  else if((particle->x < origin[0]) && (particle->y > origin[1]) && (particle->z > origin[2])){oct = 3;}
-  else if((particle->x > origin[0]) && (particle->y > origin[1]) && (particle->z < origin[2])){oct = 4;}
-  else if((particle->x > origin[0]) && (particle->y < origin[1]) && (particle->z < origin[2])){oct = 5;}
-  else if((particle->x < origin[0]) && (particle->y < origin[1]) && (particle->z < origin[2])){oct = 6;}
-  else if((particle->x < origin[0]) && (particle->y > origin[1]) && (particle->z < origin[2])){oct = 7;}
+  if((particle->x > origin[0]) && (particle->y < origin[1]) 
+      && (particle->z > origin[2])){oct = 1;}
+  else if((particle->x < origin[0]) && (particle->y < origin[1]) 
+      && (particle->z > origin[2])){oct = 2;}
+  else if((particle->x < origin[0]) && (particle->y > origin[1]) 
+      && (particle->z > origin[2])){oct = 3;}
+  else if((particle->x > origin[0]) && (particle->y > origin[1]) 
+      && (particle->z < origin[2])){oct = 4;}
+  else if((particle->x > origin[0]) && (particle->y < origin[1]) 
+      && (particle->z < origin[2])){oct = 5;}
+  else if((particle->x < origin[0]) && (particle->y < origin[1]) 
+      && (particle->z < origin[2])){oct = 6;}
+  else if((particle->x < origin[0]) && (particle->y > origin[1]) 
+      && (particle->z < origin[2])){oct = 7;}
 
   return oct; 
 }
@@ -62,7 +69,7 @@ void node::insert_particle(part* particle){
         origin_new[1] = origin[1] + 
           ((i==2||i==3||i==6||i==7)?1:-1)*halfDim/sqrt(3);
         origin_new[2] = origin[2] + ((i<4)?1:-1)*halfDim/sqrt(3);
-        octant[i] = new node(halfDim_new, origin_new, theta);
+        octant[i] = new node(halfDim_new, origin_new, theta, eps);
       }
       
       // find quadrant where the points are and insert them in child nodes
@@ -106,9 +113,9 @@ void node::calcforce(part* particle, double *force){
       double m2 = particle->mass;
       
       // update total force
-      force[0] = force[0] - dx*m1*m2/(d*d*d); 
-      force[1] = force[1] - dy*m1*m2/(d*d*d); 
-      force[2] = force[2] - dz*m1*m2/(d*d*d); 
+      force[0] = force[0] - dx*m1*m2/pow(d*d + eps*eps,1.5); 
+      force[1] = force[1] - dy*m1*m2/pow(d*d + eps*eps,1.5); 
+      force[2] = force[2] - dz*m1*m2/pow(d*d + eps*eps,1.5); 
     }
   }
   else{
@@ -125,9 +132,9 @@ void node::calcforce(part* particle, double *force){
       double m2 = particle->mass;
 
       // update total force
-      force[0] = force[0] - dx*m1*m2/(d*d*d);
-      force[1] = force[1] - dy*m1*m2/(d*d*d); 
-      force[2] = force[2] - dz*m1*m2/(d*d*d); 
+      force[0] = force[0] - dx*m1*m2/pow(d*d + eps*eps,1.5);
+      force[1] = force[1] - dy*m1*m2/pow(d*d + eps*eps,1.5); 
+      force[2] = force[2] - dz*m1*m2/pow(d*d + eps*eps,1.5); 
     }
     else
     {
@@ -138,47 +145,3 @@ void node::calcforce(part* particle, double *force){
     }
   }
 }
-/*
-double randU(){ // Returns a random number between 1, -1
-  double r = 2*rand()/double(RAND_MAX) - 1;
-  return r; 
-}
-
-// need routine that returns length, origin so that all particles are 
-// contained in it
-//double defbox(vector<pos> p){ 
-//}
-
-int main(void){
-  vector<double> origin = {0,0,0};
-  node* root = new node(2,origin, 0.5);
-  
-  vector<part> p;
-  int n = 100000;
-
-  // make random particles (coords + masses)
-  for(int i = 0; i<n; i++){
-    p.push_back (part());
-    p[i].x = randU(); //(i+1)/double(n);
-    p[i].y = randU(); // (i+1)/double(n);
-    p[i].z = randU(); // (i+1)/double(n);
-    p[i].mass = 1;// + randU();
-  }
-  
-  // insert particles into tree..
-  for(int i = 0; i<n; i++){
-    root -> insert_particle(&p[i]);
-  }
-
-  clock_t t1 = clock();
-  // calc total force on 1 particle, by all others, make this a vector again?
-  double force[n][3];
-  for(int i = 0; i < n; i++){
-    root -> calcforce(&p[i],force[i]);
-  }
-  clock_t t2 = clock();
-  cout << double((t2-t1))/CLOCKS_PER_SEC << "\n";
-
-  cout << "(" << force[0][0] << " , "<< force[1][0] << " , " << force[2][0] << ")" << "\n";
-  return 0;
-}*/

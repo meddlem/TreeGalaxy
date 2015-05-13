@@ -6,9 +6,9 @@
 #include <stdlib.h>
 #include <cmath>
 #include <vector>
-#include<string.h>
-#include<random>
-#include<unistd.h>
+#include <string.h>
+#include <random>
+#include <unistd.h>
 #include <time.h>
 
 const double PI = 3.14159265358979323846;
@@ -32,7 +32,6 @@ private:
 	std::vector<part> pos_mass; 
 	std::vector<part_vel> vel; 
 	
-
 public:
 	universe(int N_total);
 	~universe() {};
@@ -48,17 +47,19 @@ public:
 };
 
 class node{
-  private:
+private:
     part *particle_present; //contains particle locaction if node is external
     part CM; // center of mass position + mass
     std::vector<double> origin; // origin of the node
     double halfDim; // half of the box length 
     double theta; //cutoff parameter 
+    double eps; //cutoff parameter 
     node *octant[8]; // pointers to quadrants of the node 
 
-  public:
-    node(const double halfDim, const std::vector<double> origin, const double theta)
-      :origin(origin), halfDim(halfDim), theta(theta), particle_present(NULL){
+public:
+    node(const double halfDim, const std::vector<double> origin, 
+        const double theta, const double eps):origin(origin), 
+        halfDim(halfDim), theta(theta), eps(eps), particle_present(NULL){
       for (int i=0; i<8; i++){
         octant[i] = NULL;
       }
