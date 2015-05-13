@@ -41,7 +41,6 @@ class node{
     int get_octant(const part* particle) const;
     void insert_particle(part* particle);
     void calcforce(part* particle, double* force);
-    void getpoints(vector<part*> &results);
 };
 
 //methods
@@ -173,20 +172,6 @@ void node::calcforce(part* particle, double *force){
       for(int i=0; i<8; i++){
         octant[i] -> calcforce(particle, force);
       }
-    }
-  }
-}
-
-//traverse the tree and collect points
-void node::getpoints(vector<part*> &results){
-  if(isexternalnode()){
-    if(particle_present != NULL){
-      results.push_back(particle_present);
-    }
-  }
-  else{
-    for(int i=0; i<8; i++){
-      octant[i] -> getpoints(results);
     }
   }
 }
