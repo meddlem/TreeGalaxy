@@ -10,15 +10,17 @@ LFLAGS = $(DEBUG)
 
 OPTIMAZATION=  -O3 -fopenmp 
 
-OBJS = galaxysim.o tree.o
+OBJS = galaxysim.o tree.o init.o
 
 PROGRAM_NAME = program
 
 program: $(OBJS)
 	$(CC)  $(LFLAGS) $(OBJS)  -o $(PROGRAM_NAME) $(LIBS)
-tree.o: tree.cpp tree.h 
+init.o: init.cpp tree.h
+	$(CC) $(CFLAGS) init.cpp 
+tree.o: tree.cpp tree.h init.cpp
 	$(CC) $(CFLAGS) tree.cpp 
-galaxysim.o: tree.cpp tree.h 
+galaxysim.o: tree.cpp tree.h
 	$(CC) $(CFLAGS) galaxysim.cpp
 
 run :  $(PROGRAM_NAME)
