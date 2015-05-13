@@ -1,34 +1,19 @@
-FC = gfortran
-FFLAGS = -ffast-math -Wall -march=native -O3 -fopenmp #compiler flags
-LDFLAGS = -fopenmp #link flags
+CC = g++ -std=c++11
+DEBUG = -g
+CFLAGS = -c $(DEBUG) 
+LFLAGS = $(DEBUG)
+OPTIMAZATION=  -O3 -fopenmp 
+OBJS = tree.o galaxysim.o
 
-FFLAGS += $(shell pkg-config --cflags plplotd-f95)
-LIBS += $(shell pkg-config --libs plplotd-f95)
+PROGRAM_NAME = program
 
-COMPILE = $(FC) $(FFLAGS)
-LINK = $(FC) $(LDFLAGS)
+program: $(OBJS)
+	$(CC)  $(LFLAGS) $(OBJS) -o $(PROGRAM_NAME)
 
-PROG = main #program name
+tree.o: tree.h
+	$(CC) $(CFLAGS) tree.cpp
+galaxysim.o: tree.o tree.h
+	$(CC) $(CFLAGS) galaxysim.cpp
 
-#required objects: 
-OBJS =
-OBJS += constants.o
-OBJS += io.o
-OBJS += initialize.o
-OBJS += interactions.o
-OBJS += plotroutines.o
-OBJS += main_functions.o
-OBJS += main.o
-
-all: $(PROG)
-
-main: $(OBJS)
-	$(LINK) -o $@ $^ $(LIBS)
-
-%.o: %.f95
-	$(COMPILE) -o $@ -c $<
-
-.PHONY: clean
 clean:
-	$(RM) $(PROG) $(OBJS) *.mod
-	$(RM) plot*.png output.txt
+	\rm *.o $(PROGRAM_NAME)

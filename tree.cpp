@@ -1,48 +1,9 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
-#include <time.h>
+#include "tree.h"
 
 using namespace std;
-
-// structure for the particle, holds coords + mass
-struct part {
- double x;
- double y;
- double z;
- double mass;
-};
-
-class node{
-  private:
-    part *particle_present; //contains particle locaction if node is external
-    part CM; // center of mass position + mass
-    vector<double> origin; // origin of the node
-    double halfDim; // half of the box length 
-    double theta; //cutoff parameter 
-    node *octant[8]; // pointers to quadrants of the node 
-
-  public:
-    node(const double halfDim, const vector<double> origin, const double theta)
-      :origin(origin), halfDim(halfDim), theta(theta), particle_present(NULL){
-      for (int i=0; i<8; i++){
-        octant[i] = NULL;
-      }
-    }
-
-    ~node(void){
-      for (int i=0; i<8; i++)
-      {
-        delete octant[i];
-      }
-    }
-
-    //prototypes
-    bool isexternalnode(void) const;
-    int get_octant(const part* particle) const;
-    void insert_particle(part* particle);
-    void calcforce(part* particle, double* force);
-};
 
 //methods
 
@@ -177,7 +138,7 @@ void node::calcforce(part* particle, double *force){
     }
   }
 }
-
+/*
 double randU(){ // Returns a random number between 1, -1
   double r = 2*rand()/double(RAND_MAX) - 1;
   return r; 
@@ -220,4 +181,4 @@ int main(void){
 
   cout << "(" << force[0][0] << " , "<< force[1][0] << " , " << force[2][0] << ")" << "\n";
   return 0;
-}
+}*/
