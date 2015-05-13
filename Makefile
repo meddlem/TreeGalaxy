@@ -20,7 +20,7 @@ init.o: init.cpp tree.h
 	$(CC) $(CFLAGS) init.cpp 
 tree.o: tree.cpp tree.h init.cpp
 	$(CC) $(CFLAGS) tree.cpp 
-galaxysim.o: tree.cpp tree.h
+galaxysim.o: tree.cpp tree.h init.cpp galaxysim.cpp
 	$(CC) $(CFLAGS) galaxysim.cpp
 
 run :  $(PROGRAM_NAME)
