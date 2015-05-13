@@ -8,6 +8,7 @@ using namespace std;
 struct part {
  double x;
  double y;
+ double z;
  double mass;
 };
 
@@ -18,43 +19,49 @@ class node{
     vector<double> origin; // origin of the node
     double halfDim; // half of the box length 
     double theta; //cutoff parameter 
-    node *quadrant[4]; // pointers to quadrants of the node 
+    node *octant[8]; // pointers to quadrants of the node 
 
   public:
     node(const double halfDim, const vector<double> origin, const double theta)
       :origin(origin), halfDim(halfDim), theta(theta), particle_present(NULL){
-      for (int i=0; i<4; i++){
-        quadrant[i] = NULL;
+      for (int i=0; i<8; i++){
+        octant[i] = NULL;
       }
     }
 
     ~node(void){
-      for (int i=0; i<4; i++)
+      for (int i=0; i<8; i++)
       {
-        delete quadrant[i];
+        delete octant[i];
       }
     }
 
     //prototypes
     bool isexternalnode(void) const;
-    int get_quadrant(const part* particle) const;
+    int get_octant(const part* particle) const;
     void insert_particle(part* particle);
     void calcforce(part* particle, double* force);
     void getpoints(vector<part*> &results);
 };
 
+//methods
+
 bool node::isexternalnode(void) const{
-  return quadrant[0]==NULL;
+  return octant[0]==NULL;
 }
 
-int node::get_quadrant(const part* particle) const{
-  int quad = 0;
-  
-  if((particle->x > origin[0]) && (particle->y < origin[1])){quad = 1;}
-  else if((particle->x < origin[0]) && (particle->y < origin[1])){quad = 2;}
-  else if((particle->x < origin[0]) && (particle->y > origin[1])){quad = 3;}
+int node::get_octant(const part* particle) const{
+  // determine in which octant of the node a particle is located
+  int oct = 0;
+  if((particle->x > origin[0]) && (particle->y < origin[1]) && (particle->z > origin[2])){oct = 1;}
+  else if((particle->x < origin[0]) && (particle->y < origin[1]) && (particle->z > origin[2])){oct = 2;}
+  else if((particle->x < origin[0]) && (particle->y > origin[1]) && (particle->z > origin[2])){oct = 3;}
+  else if((particle->x > origin[0]) && (particle->y > origin[1]) && (particle->z < origin[2])){oct = 4;}
+  else if((particle->x > origin[0]) && (particle->y < origin[1]) && (particle->z < origin[2])){oct = 5;}
+  else if((particle->x < origin[0]) && (particle->y < origin[1]) && (particle->z < origin[2])){oct = 6;}
+  else if((particle->x < origin[0]) && (particle->y > origin[1]) && (particle->z < origin[2])){oct = 7;}
 
-  return quad; 
+  return oct; 
 }
 
 void node::insert_particle(part* particle){
@@ -79,25 +86,29 @@ void node::insert_particle(part* particle){
       // update center of mass position
       CM.x = (Mold*CM.x + Madd*particle->x)/Mnew;
       CM.y = (Mold*CM.y + Madd*particle->y)/Mnew;
+      CM.z = (Mold*CM.z + Madd*particle->z)/Mnew;
       // update total mass
       CM.mass = Mnew;
 
       //now make the quadrant nodes
       double halfDim_new = halfDim/2;
-      vector<double> origin_new(2);
+      vector<double> origin_new(3);
 
-      for(int i=0; i<4; i++){
-        origin_new[0] = origin[0] + ((i<2)?1:-1)*halfDim/sqrt(2);
-        origin_new[1] = origin[1] + ((i==0||i==3)?1:-1)*halfDim/sqrt(2);
-        quadrant[i] = new node(halfDim_new, origin_new, theta);
+      for(int i=0; i<8; i++){
+        origin_new[0] = origin[0] + 
+          ((i==0||i==1||i==4||i==5)?1:-1)*halfDim/sqrt(3);
+        origin_new[1] = origin[1] + 
+          ((i==2||i==3||i==6||i==7)?1:-1)*halfDim/sqrt(3);
+        origin_new[2] = origin[2] + ((i<4)?1:-1)*halfDim/sqrt(3);
+        octant[i] = new node(halfDim_new, origin_new, theta);
       }
       
       // find quadrant where the points are and insert them in child nodes
-      int qold = get_quadrant(particle_old);
-      int qnew = get_quadrant(particle);
+      int Oold = get_octant(particle_old);
+      int Onew = get_octant(particle);
 
-      quadrant[qold] -> insert_particle(particle_old);
-      quadrant[qnew] -> insert_particle(particle);
+      octant[Oold] -> insert_particle(particle_old);
+      octant[Onew] -> insert_particle(particle);
     }
   }
   else{
@@ -108,61 +119,59 @@ void node::insert_particle(part* particle){
     // update center of mass position
     CM.x = (Mold*CM.x + Madd*particle->x)/Mnew;
     CM.y = (Mold*CM.y + Madd*particle->y)/Mnew;
+    CM.z = (Mold*CM.z + Madd*particle->z)/Mnew;
     // update total mass
     CM.mass = Mnew;
     
-    // and then insert particle in one of the quadrants
-    int q = get_quadrant(particle);
-    quadrant[q] -> insert_particle(particle); 
+    // and then insert particle in one of the octants
+    int q = get_octant(particle);
+    octant[q] -> insert_particle(particle); 
   }
 }
 
 // calculates forces particles/ CMs on a given particle
 void node::calcforce(part* particle, double *force){
   if(isexternalnode()){
-    if((particle_present != NULL) && (particle_present !=particle)){ 
+    if((particle_present != NULL) && (particle_present != particle)){ 
       // dit laatste kan problemen geven, check met sarwan
       // weet niet of dit kan met pointers
       // calculate force
       double dx = particle->x - particle_present->x;
       double dy = particle->y - particle_present->y;
-      double d = sqrt(dx*dx + dy*dy);    
+      double dz = particle->z - particle_present->z;
+      double d = sqrt(dx*dx + dy*dy + dz*dz);    
       double m1 = particle_present->mass;
       double m2 = particle->mass;
       
-      vector<double> force(2);
+      // update total force
       force[0] = force[0] - dx*m1*m2/(d*d); 
       force[1] = force[1] - dy*m1*m2/(d*d); 
-      
-      // push force vector into list containing all force vectors..
-      //forces.push_back(&force);
+      force[2] = force[2] - dz*m1*m2/(d*d); 
     }
   }
   else{
     // calculate s/d<theta
-    double s = halfDim; 
     double dx = particle->x - CM.x;
     double dy = particle->y - CM.y;
-    double m1 = CM.mass;
-    double m2 = particle->mass;
+    double dz = particle->z - CM.z;
     // calculate distance of particle to CM of node
-    double d = sqrt(dx*dx + dy*dy);
+    double d = sqrt(dx*dx + dy*dy + dz*dz);
 
-    if ((s/d) < theta){
-      // treat node as a single particle, and calc force on particle based on
-      // this
-      vector<double> temp_force(2);
+    if ((halfDim/d) < theta){
+      // treat node as a single particle, and calc force
+      double m1 = CM.mass;
+      double m2 = particle->mass;
 
-      // push force vector into list containing all force vectors..
-      //forces.push_back(&force);
+      // update total force
       force[0] = force[0] - dx*m1*m2/(d*d);
       force[1] = force[1] - dy*m1*m2/(d*d); 
+      force[2] = force[2] - dz*m1*m2/(d*d); 
     }
     else
     {
       // continue recursively into child nodes
-      for(int i=0; i<4; i++){
-        quadrant[i] -> calcforce(particle, force);
+      for(int i=0; i<8; i++){
+        octant[i] -> calcforce(particle, force);
       }
     }
   }
@@ -176,8 +185,8 @@ void node::getpoints(vector<part*> &results){
     }
   }
   else{
-    for(int i=0; i<4; i++){
-      quadrant[i] -> getpoints(results);
+    for(int i=0; i<8; i++){
+      octant[i] -> getpoints(results);
     }
   }
 }
@@ -193,7 +202,7 @@ double randU(){ // Returns a random number between 1, -1
 //}
 
 int main(void){
-  vector<double> origin = {0,0};
+  vector<double> origin = {0,0,0};
   node* root = new node(2,origin, 0.5);
   
   vector<part> p;
@@ -204,6 +213,7 @@ int main(void){
     p.push_back (part());
     p[i].x = randU(); //(i+1)/double(n);
     p[i].y = randU(); // (i+1)/double(n);
+    p[i].z = randU(); // (i+1)/double(n);
     p[i].mass = 1;// + randU();
   }
   
@@ -217,9 +227,9 @@ int main(void){
   //root -> getpoints(results);
 
   // calc total force on 1 particle, by all others
-  double force[2];
+  double force[3];
   root -> calcforce(&p[n-1],force);
 
-  cout << "(" << force[0] << " , "<< force[1] << ")" << "\n";
+  cout << "(" << force[0] << " , "<< force[1] << " , " << force[2] << ")" << "\n";
   return 0;
 }
