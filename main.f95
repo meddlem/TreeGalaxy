@@ -10,11 +10,9 @@ program main
   real(dp), allocatable   :: v(:,:), F(:,:) 
   type(part), allocatable :: r(:)
   
-  ! allocate large arrays
   allocate(r(N), v(N,3), F(N,3))
-  ! initialize the model
+
   call init(r,v)
-  ! run simulation
   call run_sim(r, v, F)
 
 contains 
@@ -26,7 +24,7 @@ contains
     integer  :: i, j
     
     call force(F,r)
-    if(prtplt) call particle_plot_init(-20._dp,20.1_dp)
+    if(prtplt) call particle_plot_init(-9._dp,9._dp)
     
     do i = 1,steps
       ! plot particle positions

@@ -7,12 +7,11 @@ module initialize
 
 contains
   subroutine init(r,v) 
-    ! gives initial positions based on FCC lattice
     type(part), intent(inout) :: r(:)
     real(dp), intent(inout)   :: v(:,:)
     integer :: i
 
-    r%mass = 0.01_dp !masses
+    r%mass = 0.005_dp !masses, kind of need to guess right now
 
     ! read data from Sellwood 1993
     open(10, file='stars.dat')
