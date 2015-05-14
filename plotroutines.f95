@@ -39,7 +39,7 @@ contains
     call plbox3("", "", 0._dp, 0, "", "", 0._dp, 0, "", "", &
       0._dp, 0) !plots the axes etc
     call plcol0(3) !point color
-    call plpoin3(r_p(:,3), r_p(:,2), r_p(:,1), 1) !this plots the points
+    call plpoin3(r_p(:,1), r_p(:,2), r_p(:,3), 1) !this plots the points
     call plflush()
   end subroutine
   

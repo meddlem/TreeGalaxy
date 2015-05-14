@@ -25,11 +25,11 @@ contains
     logical :: prtplt = .true.
     
     call force(F,r)
-    if(prtplt) call particle_plot_init(-25._dp,25._dp)
+    if(prtplt) call particle_plot_init(-20._dp, 20._dp)
     
     do i = 1,steps
       ! plot particle positions
-      if(prtplt .and. mod(i,10)==0) call particle_plot(r) 
+      if(prtplt .and. mod(i,1)==0) call particle_plot(r) 
       ! time integration using the "velocity Verlet" algorithm: 
       do j = 1,N
         ! update positions

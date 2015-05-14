@@ -6,6 +6,16 @@ module tree
   public :: insert_particle, calc_force, mkbox, destroytree
 
 contains
+  
+  subroutine mkbox(p, M)
+    ! initiates box with correct dimensions, origin for root 
+    type(part), intent(in) :: p(:)
+    type(node), pointer    :: M
+
+    M%halfDim = 1.1_dp*maxval([maxval(abs(p%pos(1))), maxval(abs(p%pos(2))), &
+      maxval(abs(p%pos(3)))])
+    M%origin  = [0._dp, 0._dp, 0._dp]
+  end subroutine
 
   recursive subroutine insert_particle(p, M)
     type(node), pointer, intent(inout) :: M
@@ -180,7 +190,7 @@ contains
         d = sqrt(sum(dr**2));
 
         if (d>0.0001_dp) then ! if particles are too close ignore
-          F = F - Gr*dr*m1*m2/(d**2+eps**2)**1.5_dp
+          F = F - Gr*dr*m1*m2/(d**2 + eps**2)**1.5_dp
         endif
       endif
     else 
@@ -193,14 +203,14 @@ contains
         m2 = p%mass
         F = F - Gr*dr*m1*m2/(d**2 + eps**2)**1.5_dp
       else
-        call calc_force(M%octant1,p,F)
-        call calc_force(M%octant2,p,F)
-        call calc_force(M%octant3,p,F)
-        call calc_force(M%octant4,p,F)
-        call calc_force(M%octant5,p,F)
-        call calc_force(M%octant6,p,F)
-        call calc_force(M%octant7,p,F)
-        call calc_force(M%octant8,p,F)
+        call calc_force(M%octant1, p, F)
+        call calc_force(M%octant2, p, F)
+        call calc_force(M%octant3, p, F)
+        call calc_force(M%octant4, p, F)
+        call calc_force(M%octant5, p, F)
+        call calc_force(M%octant6, p, F)
+        call calc_force(M%octant7, p, F)
+        call calc_force(M%octant8, p, F)
       endif
     endif
   end subroutine
@@ -242,15 +252,5 @@ contains
     endif
 
     deallocate(M)
-  end subroutine
-  
-  subroutine mkbox(p, M)
-    ! initiates box with correct dimensions, origin for root 
-    type(part), intent(in) :: p(:)
-    type(node), pointer    :: M
-
-    M%halfDim = 1.1_dp*maxval([maxval(abs(p%pos(1))), maxval(abs(p%pos(2))), &
-      maxval(abs(p%pos(3)))])
-    M%origin  = [0._dp, 0._dp, 0._dp]
   end subroutine
 end module
