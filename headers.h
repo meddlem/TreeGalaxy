@@ -1,5 +1,5 @@
-#ifndef tree_H
-#define tree_H
+#ifndef headers_H
+#define headers_H
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -10,6 +10,15 @@
 #include <unistd.h>
 #include <time.h>
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/glext.h>
+#include <GL/glu.h>
+#include <SDL/SDL.h>
+#include <GLFW/glfw3.h>
+
+#include <random>
+#include <stdexcept>
 const double PI = 3.14159265358979323846;
 
 struct part {
@@ -24,6 +33,7 @@ struct part_vel {
 	double vy;
 	double vz;
 };
+
 
 class universe{
 private: 
@@ -46,6 +56,7 @@ public:
   std::vector<part> get_pos(){return pos_mass;}
 };
 
+//class used for the octree
 class node{
 private:
     part *particle_present; //contains particle locaction if node is external
@@ -79,4 +90,23 @@ public:
     void calcforce(part* particle, part_vel* force);
 };
 
+// For OpenGL rendering
+struct col {
+	float r;
+	float g;
+	float b;
+};
+
+void initGL();
+void Initiate_Velocity();
+void initGLFW();
+void initPointSpriteExt();
+static void error_callback(int error, const char* description);
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void Pre_Render();
+void Render(std::vector<part> coord, int num);
+void Post_Render();
+
+extern GLuint m_texStar;
+extern GLFWwindow* window;
 #endif

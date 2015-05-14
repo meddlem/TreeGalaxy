@@ -4,20 +4,20 @@ DEBUG = -g
 CFLAGS = -c $(DEBUG) 
 LFLAGS = $(DEBUG)
 OPTIMAZATION=  -O3 -fopenmp 
-OBJS = tree.o init.o galaxysim.o renderingtest.o main.o
+OBJS = tree.o init.o galaxysim.o render.o main.o
 PROGRAM_NAME = program
 
 program: $(OBJS)
 	$(CC)  $(LFLAGS) $(OBJS)  -o $(PROGRAM_NAME) $(LIBS)
-tree.o: tree.cpp tree.h 
+tree.o: tree.cpp headers.h 
 	$(CC) $(CFLAGS) tree.cpp 
-renderingtest.o: Rendering.h renderingtest.cpp
-	$(CC) $(CFLAGS) renderingtest.cpp 
-init.o: init.cpp tree.h
+render.o: render.cpp #Rendering.h
+	$(CC) $(CFLAGS) render.cpp 
+init.o: init.cpp headers.h
 	$(CC) $(CFLAGS) init.cpp 
-galaxysim.o: tree.h galaxysim.cpp
+galaxysim.o: headers.h galaxysim.cpp
 	$(CC) $(CFLAGS) galaxysim.cpp
-main.o: main.cpp tree.h tree.cpp init.cpp galaxysim.cpp renderingtest.cpp
+main.o: main.cpp headers.h tree.cpp init.cpp galaxysim.cpp render.cpp
 	$(CC) $(CFLAGS) main.cpp
 
 run :  $(PROGRAM_NAME)

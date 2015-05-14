@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
-#include "tree.h"
+#include "headers.h"
 
 using namespace std;
 

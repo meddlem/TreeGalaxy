@@ -1,5 +1,4 @@
-#include "tree.h"
-#include "Rendering.h"
+#include "headers.h"
 using namespace std;
 
 int main(void){
@@ -17,8 +16,7 @@ int main(void){
   Render(uni.get_pos(),N);
   uni.update_force();
 
-  for (int i = 0; i<tsteps; i++){		
-    std::cout << i << "\n";
+  for (int i = 0; i < tsteps; i++){		
     uni.update_position();	// Update the positio
     uni.update_velocity();	// Update the velocity
     uni.update_force();

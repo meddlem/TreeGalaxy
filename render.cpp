@@ -6,7 +6,7 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
-#include "Rendering.h"
+#include "headers.h"
 //float *pos[3];
 //const int N=40000;
 GLuint m_texStar;
