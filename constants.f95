@@ -10,7 +10,7 @@ module constants
 
   real(dp), parameter :: dt = 0.05_dp 
   real(dp), parameter :: eps = 0.025_dp ! softening parameter 
-  real(dp), parameter :: theta = 0.5_dp ! cutoff 
+  real(dp), parameter :: theta = 1._dp ! opening angle
   
   integer, parameter :: steps = 30000
   integer, parameter :: N = 20480
