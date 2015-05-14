@@ -31,9 +31,12 @@ contains
     do i = 1,N 
       call getforce(root,r(i),F(i,:))
     enddo
+    
     if (maxval(F) > 100000._dp) then
-      print *, "help"
+      print *, "ebin"
     endif
-    deallocate(root)
+
+    ! deallocate tree recursively
+    call destroytree(root)
   end subroutine
 end module 

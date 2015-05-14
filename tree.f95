@@ -3,7 +3,7 @@ module tree
   use treestructs
   implicit none
   private
-  public :: insert_particle, getforce, mkbox
+  public :: insert_particle, getforce, mkbox, destroytree
 
 contains
   recursive subroutine insert_particle(p, M)
@@ -189,6 +189,45 @@ contains
     endif
   end subroutine
 
+  recursive subroutine destroytree(M)
+    ! deallocates tree structure recursively
+    type(node), pointer :: M
+
+    if (associated(M%octant1)) then
+      call destroytree(M%octant1)
+    endif
+
+    if (associated(M%octant2)) then
+      call destroytree(M%octant2)
+    endif
+
+    if (associated(M%octant3)) then
+      call destroytree(M%octant3)
+    endif
+
+    if (associated(M%octant4)) then
+      call destroytree(M%octant4)
+    endif
+
+    if (associated(M%octant5)) then
+      call destroytree(M%octant5)
+    endif
+
+    if (associated(M%octant6)) then
+      call destroytree(M%octant6)
+    endif
+
+    if (associated(M%octant7)) then
+      call destroytree(M%octant7)
+    endif
+
+    if (associated(M%octant8)) then
+      call destroytree(M%octant8)
+    endif
+
+    deallocate(M)
+  end subroutine
+  
   subroutine mkbox(p, M)
     ! initiates box with correct dimensions, origin for root 
     type(part), intent(in) :: p(:)

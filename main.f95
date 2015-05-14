@@ -29,7 +29,6 @@ contains
     do i = 1,steps
       ! plot particle positions
       if(prtplt .and. mod(i,10)==0) call particle_plot(r) 
-
       ! time integration using the "velocity Verlet" algorithm: 
       do j = 1,N
         ! update positions
