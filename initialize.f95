@@ -9,16 +9,19 @@ contains
   subroutine init(r,v) 
     type(part), intent(inout) :: r(:)
     real(dp), intent(inout)   :: v(:,:)
-    integer :: i
+    integer :: i, j
 
-    r%mass = 0.005_dp !masses, kind of need to guess right now
-
-    ! read data from Sellwood 1993
-    open(10, file='stars.dat')
-      do i=1,N
-        read(10,*) r(i)%pos(3), r(i)%pos(2), r(i)%pos(1), &
-          v(i,3), v(i,2), v(i,1)
+    !r%mass = 0.01_dp !masses, kind of need to guess right now
+    ! read data from Dubinksi 1995
+    open(10, file='dubinski.tab')
+      do i = 1,N
+        read(10,*) r(i)%mass, r(i)%pos(1), r(i)%pos(2), r(i)%pos(3), v(i,1), v(i,2), v(i,3)
+        do j = 1,7
+          read(10,*)  
+        enddo
       enddo 
     close(10)
+
+    r%mass = 8._dp*r%mass ! rescale
   end subroutine  
 end module 
