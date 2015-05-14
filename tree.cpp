@@ -1,18 +1,15 @@
-#include <vector>
-#include <iostream>
-#include <math.h>
 #include "headers.h"
 
 using namespace std;
 
-//methods
+//methods implementing the octree
 
-bool node::isexternalnode(void) const{
+bool node::externalnode(void) const{
   return octant[0]==NULL;
 }
 
 int node::get_octant(const part* particle) const{
-  // determine in which octant of the node a particle is located, the dumb way
+  // determine in which octant of the node a particle is located
   int oct = 0;
   
   if((particle->x > origin[0]) && (particle->y < origin[1]) 
@@ -34,7 +31,7 @@ int node::get_octant(const part* particle) const{
 }
 
 void node::insert_particle(part* particle){
-  if(isexternalnode()){
+  if(externalnode()){
     if(particle_present == NULL){
       // if there pare no particles then we can put particle here
       particle_present = particle; 
@@ -43,7 +40,7 @@ void node::insert_particle(part* particle){
     }
     else{
       // if there are other paticles we need to split up the node
-      // we take the old + new points and put them in quadrants of the node
+      // we take the old + new points and put them in octants of the node
       // but first we update the mass and center of mass of the node
       part* particle_old = particle_present;
       particle_present = NULL;
@@ -100,7 +97,7 @@ void node::insert_particle(part* particle){
 
 // calculates forces particles/ CMs on a given particle
 void node::calcforce(part* particle, part_vel* force){
-  if(isexternalnode()){
+  if(externalnode()){
     if((particle_present != NULL) && (particle_present != particle)){ 
       // calculate force
       double dx = particle->x - particle_present->x;
@@ -117,15 +114,15 @@ void node::calcforce(part* particle, part_vel* force){
     }
   }
   else{
-    // calculate s/d<theta
+    // calculate distance of particle to CM of node
     double dx = particle->x - CM.x;
     double dy = particle->y - CM.y;
     double dz = particle->z - CM.z;
-    // calculate distance of particle to CM of node
     double d = sqrt(dx*dx + dy*dy + dz*dz);
 
+    // check if s/d<theta
     if ((2*halfDim/d) < theta){
-      // treat node as a single particle, and calc force
+      // in this case treat node as a single particle, and calc force
       double m1 = CM.mass;
       double m2 = particle->mass;
 
@@ -136,7 +133,7 @@ void node::calcforce(part* particle, part_vel* force){
     }
     else
     {
-      // continue recursively into child nodes
+      // continue recursively into the child nodes
       for(int i=0; i<8; i++){
         octant[i] -> calcforce(particle, force);
       }

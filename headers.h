@@ -47,7 +47,7 @@ public:
 	universe(int N, double dt);
 	~universe() {};
 
-	void generate_gal(int N_stars, part galaxy_position_mass, part_vel galaxy_velocity);
+	void generate_galaxy();
   void read_galaxy_data();
   void update_velocity();
   void update_force();
@@ -76,7 +76,7 @@ public:
       }
     }
 
-    ~node(void){
+    ~node(){
       for (int i=0; i<8; i++)
       {
         delete octant[i];
@@ -84,7 +84,7 @@ public:
     }
 
     //prototypes
-    bool isexternalnode(void) const;
+    bool externalnode() const;
     int get_octant(const part* particle) const;
     void insert_particle(part* particle);
     void calcforce(part* particle, part_vel* force);
