@@ -41,7 +41,7 @@ void Update_position(){
 
 void Update_force(){
   // start a new tree
-  vector<double> origin = {0,0,0};
+  vector<double> origin (3,0);
   double rootsz = rootsize();
   cout << rootsz << "\n";
   node* root = new node(rootsz, origin, 0.5, 0.025);
