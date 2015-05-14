@@ -9,15 +9,15 @@ PROGRAM_NAME = program
 
 program: $(OBJS)
 	$(CC)  $(LFLAGS) $(OBJS)  -o $(PROGRAM_NAME) $(LIBS)
+tree.o: tree.cpp tree.h 
+	$(CC) $(CFLAGS) tree.cpp 
 renderingtest.o: Rendering.h renderingtest.cpp
 	$(CC) $(CFLAGS) renderingtest.cpp 
 init.o: init.cpp tree.h
 	$(CC) $(CFLAGS) init.cpp 
-tree.o: tree.cpp tree.h 
-	$(CC) $(CFLAGS) tree.cpp 
 galaxysim.o: tree.h galaxysim.cpp
 	$(CC) $(CFLAGS) galaxysim.cpp
-main.o: main.cpp tree.h tree.cpp init.cpp galaxysim.cpp
+main.o: main.cpp tree.h tree.cpp init.cpp galaxysim.cpp renderingtest.cpp
 	$(CC) $(CFLAGS) main.cpp
 
 run :  $(PROGRAM_NAME)
