@@ -31,8 +31,8 @@ void Pre_Render();
 void Render(float **coord, int num);
 void Post_Render();
 
-GLuint m_texStar;
-GLFWwindow* window;
+extern GLuint m_texStar;
+extern GLFWwindow* window;
 
 struct col {
 	float r;

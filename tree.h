@@ -43,6 +43,7 @@ public:
     void update_force();
     void update_position();
     double rootsize();
+    float ** get_pos();
 };
 
 class node{

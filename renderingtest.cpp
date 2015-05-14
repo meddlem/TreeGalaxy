@@ -9,6 +9,9 @@
 #include "Rendering.h"
 //float *pos[3];
 //const int N=40000;
+GLuint m_texStar;
+GLFWwindow* window;
+
 
 std::default_random_engine generator;
 std::normal_distribution<float> maxwell(0.0,1.0);
@@ -219,7 +222,7 @@ void Render(float **coord, int num)
 
 	          //glLoadIdentity();
 
-	          glPointSize(4); //pStars[i].m_mag*10);
+	          glPointSize(20); //pStars[i].m_mag*10);
 	            glBegin(GL_POINTS);
 
 

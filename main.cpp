@@ -1,4 +1,5 @@
 #include "tree.h"
+#include "Rendering.h"
 using namespace std;
 
 int main(){
@@ -44,12 +45,17 @@ int main(){
 	// Add galaxies
 	uni.generate_gal(N_gal1,gal1,gal1_vel);
 	uni.generate_gal(N_gal2,gal2,gal2_vel);
-  
+  	Pre_Render();
   for (int i = 0; i<Run; i++){		
     uni.update_force();
-    uni.update_velocity_Plus();			// Update the velocity
-    uni.update_position();	// Update the position
+    uni.update_velocity_Plus();	// Update the velocity
+    uni.update_position();	// Update the positio
+    Render(uni.get_pos(),N);
+    
+
+
   }
 
-  return 0;
+  Post_Render();
+  return 0;	
 }

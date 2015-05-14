@@ -58,3 +58,19 @@ void universe::update_velocity_Plus(){
     vel[i].vz = vel[i].vz + force[i][2]*dt;
   }
 }
+
+float ** universe::get_pos(){
+  
+  float** out = 0;
+  out = new float*[N];
+
+  for (int i = 0; i < N; i++)
+  {
+    out[i] = new float[3];
+    out[i][0] = pos_mass[i].x;
+    out[i][1] = pos_mass[i].y;
+    out[i][2] = pos_mass[i].z;
+  }
+
+  return out;
+}
