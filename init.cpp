@@ -46,16 +46,17 @@ void universe::generate_gal(int N_stars, part gal_pos_mass, part_vel gal_vel)
 
 	// Plummer
 	
+	/*
 	for (int i = N_old; i < N; ++i)
 	{
-		// Generate position
+    // Generate position
 		radius = radius0 / sqrt( pow(frand(0,1),(-2.0/3.0)) - 1.0);
 		theta = acos(frand(-1, 1));
 		phi = frand(0, 2*PI);
 		pos_mass[i].x = gal_pos_mass.x + radius * sin( theta ) * cos( phi );
 		pos_mass[i].y = gal_pos_mass.y + radius * sin( theta ) * sin( phi );
 		pos_mass[i].z = gal_pos_mass.z + radius * cos( theta );
-
+    
 		// Generate velocity
 		while (y > x*x*pow((1.0-x*x),3.5)){
 			x = frand(0,1);
@@ -72,9 +73,17 @@ void universe::generate_gal(int N_stars, part gal_pos_mass, part_vel gal_vel)
 
 		// Determine mass
 		pos_mass[i].mass = star_mass;
+    
+	}*/
+  ifstream input("dubinski.tab");
 
-	}
-
+    int n = 0;
+    while (n < N)
+    {
+      input >> pos_mass[n].mass >> pos_mass[n].z >> pos_mass[n].y >> 
+        pos_mass[n].x >> vel[n].vz >> vel[n].vy >> vel[n].vx;
+      n++;
+    }
 }
 
 void universe::print2file(){

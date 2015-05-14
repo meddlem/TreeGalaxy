@@ -3,13 +3,12 @@
 using namespace std;
 
 int main(){
-
+  
 	double dt = 0.05;		// discrete time step
 	int Run = 1000; 		// Number of simulations rounds
-
 	// Create first galaxy
 	// Number of stars
-	int N_gal1 = 1000;
+	int N_gal1 = 40000;
 
 	// position of the galaxy
 	part gal1;
@@ -25,7 +24,7 @@ int main(){
 		gal1_vel.vx = 0;
 		gal1_vel.vy = 0;
 		gal1_vel.vz = 0;
-
+  /*
 	// Same for galaxy n°2
 	int N_gal2 = 1000;
 	part gal2;
@@ -38,22 +37,21 @@ int main(){
 		gal2_vel.vy = 0;
 		gal2_vel.vz = 0;
 
-	// Create a universe with N_gal1 + N_gal2 stars
-	int N = N_gal1 + N_gal2;
+	// Create a universe with N_gal1 + N_gal2 stars*/
+	int N = N_gal1;
 	universe uni(N,dt);
 
 	// Add galaxies
 	uni.generate_gal(N_gal1,gal1,gal1_vel);
-	uni.generate_gal(N_gal2,gal2,gal2_vel);
+	//uni.generate_gal(N_gal2,gal2,gal2_vel);
+
   	Pre_Render();
-  for (int i = 0; i<Run; i++){		
-    uni.update_force();
-    uni.update_velocity_Plus();	// Update the velocity
-    uni.update_position();	// Update the positio
     Render(uni.get_pos(),N);
-    
-
-
+  for (int i = 0; i<Run; i++){		
+   // uni.update_force();
+   // uni.update_velocity_Plus();	// Update the velocity
+   // uni.update_position();	// Update the positio
+    Render(uni.get_pos(),N);
   }
 
   Post_Render();

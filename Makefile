@@ -1,21 +1,16 @@
 CC = g++ -std=c++11 
-
-LIBS = 
-
+LIBS = -lGLEW -lGL -lSDL -lGLU -lglfw
 DEBUG = -g
-
 CFLAGS = -c $(DEBUG) 
-
 LFLAGS = $(DEBUG)
-
 OPTIMAZATION=  -O3 -fopenmp 
-
-OBJS = galaxysim.o tree.o init.o main.o
-
+OBJS = galaxysim.o tree.o init.o renderingtest.o main.o
 PROGRAM_NAME = program
 
 program: $(OBJS)
 	$(CC)  $(LFLAGS) $(OBJS)  -o $(PROGRAM_NAME) $(LIBS)
+renderingtest.o: Rendering.h
+	$(CC) $(CFLAGS) renderingtest.cpp 
 init.o: init.cpp tree.h
 	$(CC) $(CFLAGS) init.cpp 
 tree.o: tree.cpp tree.h 
