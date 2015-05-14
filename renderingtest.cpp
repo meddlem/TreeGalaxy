@@ -184,7 +184,7 @@ void Render(float **coord, int num)
 
 	       // gluPerspective(2, width/height,100, 1000);
 
-          glScalef(0.05, 0.05, 0.05);
+          glScalef(0.005, 0.005, 0.005);
 	        //glEnable(GL_NORMALIZE);
 	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

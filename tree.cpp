@@ -102,8 +102,6 @@ void node::insert_particle(part* particle){
 void node::calcforce(part* particle, double *force){
   if(isexternalnode()){
     if((particle_present != NULL) && (particle_present != particle)){ 
-      // dit laatste kan problemen geven, check met sarwan
-      // weet niet of dit kan met pointers
       // calculate force
       double dx = particle->x - particle_present->x;
       double dy = particle->y - particle_present->y;
@@ -126,7 +124,7 @@ void node::calcforce(part* particle, double *force){
     // calculate distance of particle to CM of node
     double d = sqrt(dx*dx + dy*dy + dz*dz);
 
-    if ((halfDim/d) < theta){
+    if ((2*halfDim/d) < theta){
       // treat node as a single particle, and calc force
       double m1 = CM.mass;
       double m2 = particle->mass;
