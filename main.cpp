@@ -4,7 +4,9 @@ using namespace std;
 
 double dt = 0.05;		// discrete time step
 int Run = 1000; 		// Number of simulations rounds
-const int N = 81920;
+const int N = 81920; // number of particles in sim
+const double eps = 0.025; //softening parameter
+const double theta = 0.9; //opening angle
 
 float* out[3];
 std::vector<part> pos_mass; 
@@ -65,10 +67,9 @@ void update_force(){
     }
   }
 
-  
   // start a new tree
   vector<double> origin (3,0);
-  node* root = new node(rootsize(), origin, 0.9, 0.025);
+  node* root = new node(rootsize(), origin, theta, eps);
 
   // insert particles into tree
   for(int i = 0; i<N; i++){
