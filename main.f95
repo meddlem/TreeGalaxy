@@ -21,7 +21,8 @@ contains
     type(part), intent(inout) :: r(:)
     real(dp), intent(inout)   :: v(:,:), F(:,:)
 
-    integer  :: i, j
+    integer :: i, j
+    logical :: prtplt = .true.
     
     call force(F,r)
     if(prtplt) call particle_plot_init(-25._dp,25._dp)

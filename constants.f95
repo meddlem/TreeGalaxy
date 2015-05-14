@@ -11,9 +11,8 @@ module constants
   real(dp), parameter :: dt = 0.05_dp 
   real(dp), parameter :: eps = 0.025_dp ! softening parameter 
   real(dp), parameter :: theta = 1._dp ! opening angle
+  real(dp), parameter :: Gr = 1._dp ! gravitational constant
   
-  integer, parameter :: steps = 30000
-  integer, parameter :: N = 20480
-  
-  logical, parameter :: prtplt = .true.
+  integer, parameter :: steps = 30000 ! number of timesteps
+  integer, parameter :: N = 20480 ! number of stars
 end module

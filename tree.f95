@@ -3,9 +3,10 @@ module tree
   use treestructs
   implicit none
   private
-  public :: insert_particle, getforce, mkbox, destroytree
+  public :: insert_particle, calc_force, mkbox, destroytree
 
 contains
+
   recursive subroutine insert_particle(p, M)
     type(node), pointer, intent(inout) :: M
     type(part), intent(in)             :: p
@@ -53,46 +54,9 @@ contains
         M%octant7 => child_7
         M%octant8 => child_8
 
-        ! determine new origins and box sizes for children
-        child_1%origin(1) = M%origin(1) + M%halfDim/sqrt(3._dp) 
-        child_1%origin(2) = M%origin(2) + M%halfDim/sqrt(3._dp) 
-        child_1%origin(3) = M%origin(3) + M%halfDim/sqrt(3._dp) 
-        child_1%halfDim = M%halfDim/2._dp
-
-        child_2%origin(1) = M%origin(1) + M%halfDim/sqrt(3._dp) 
-        child_2%origin(2) = M%origin(2) - M%halfDim/sqrt(3._dp) 
-        child_2%origin(3) = M%origin(3) + M%halfDim/sqrt(3._dp) 
-        child_2%halfDim = M%halfDim/2._dp
-      
-        child_3%origin(1) = M%origin(1) - M%halfDim/sqrt(3._dp) 
-        child_3%origin(2) = M%origin(2) - M%halfDim/sqrt(3._dp) 
-        child_3%origin(3) = M%origin(3) + M%halfDim/sqrt(3._dp) 
-        child_3%halfDim = M%halfDim/2._dp
-
-        child_4%origin(1) = M%origin(1) - M%halfDim/sqrt(3._dp) 
-        child_4%origin(2) = M%origin(2) + M%halfDim/sqrt(3._dp) 
-        child_4%origin(3) = M%origin(3) + M%halfDim/sqrt(3._dp) 
-        child_4%halfDim = M%halfDim/2._dp
-        
-        child_5%origin(1) = M%origin(1) + M%halfDim/sqrt(3._dp) 
-        child_5%origin(2) = M%origin(2) + M%halfDim/sqrt(3._dp) 
-        child_5%origin(3) = M%origin(3) - M%halfDim/sqrt(3._dp) 
-        child_5%halfDim = M%halfDim/2._dp
-        
-        child_6%origin(1) = M%origin(1) + M%halfDim/sqrt(3._dp) 
-        child_6%origin(2) = M%origin(2) - M%halfDim/sqrt(3._dp) 
-        child_6%origin(3) = M%origin(3) - M%halfDim/sqrt(3._dp) 
-        child_6%halfDim = M%halfDim/2._dp
-
-        child_7%origin(1) = M%origin(1) - M%halfDim/sqrt(3._dp) 
-        child_7%origin(2) = M%origin(2) - M%halfDim/sqrt(3._dp) 
-        child_7%origin(3) = M%origin(3) - M%halfDim/sqrt(3._dp) 
-        child_7%halfDim = M%halfDim/2._dp
-
-        child_8%origin(1) = M%origin(1) - M%halfDim/sqrt(3._dp) 
-        child_8%origin(2) = M%origin(2) + M%halfDim/sqrt(3._dp) 
-        child_8%origin(3) = M%origin(3) - M%halfDim/sqrt(3._dp) 
-        child_8%halfDim = M%halfDim/2._dp
+        ! give children origins, sizes
+        call init_children(M, child_1, child_2, child_3, child_4, child_5, &
+          child_6, child_7, child_8)
 
         ! now we find the octant the points are in (p_old and p) and
         ! insert them in the appropriate child nodes that we just created
@@ -116,6 +80,58 @@ contains
       call get_octant(p, M, Next_M1)
       call insert_particle(p, Next_M1) 
     endif
+  end subroutine
+
+  subroutine init_children(M, child_1, child_2, child_3, child_4, child_5, &
+      child_6, child_7, child_8)
+    type(node), pointer :: M, child_1, child_2, child_3, child_4, child_5, &
+      child_6, child_7, child_8
+
+    real(dp) :: O(3), d
+
+    O = M%origin
+    d = M%halfDim
+
+    ! determine new origins and box sizes for children
+    child_1%origin(1) = O(1) + d/sqrt(3._dp) 
+    child_1%origin(2) = O(2) + d/sqrt(3._dp) 
+    child_1%origin(3) = O(3) + d/sqrt(3._dp) 
+    child_1%halfDim = d/2._dp
+
+    child_2%origin(1) = O(1) + d/sqrt(3._dp) 
+    child_2%origin(2) = O(2) - d/sqrt(3._dp) 
+    child_2%origin(3) = O(3) + d/sqrt(3._dp) 
+    child_2%halfDim = d/2._dp
+  
+    child_3%origin(1) = O(1) - d/sqrt(3._dp) 
+    child_3%origin(2) = O(2) - d/sqrt(3._dp) 
+    child_3%origin(3) = O(3) + d/sqrt(3._dp) 
+    child_3%halfDim = d/2._dp
+
+    child_4%origin(1) = O(1) - d/sqrt(3._dp) 
+    child_4%origin(2) = O(2) + d/sqrt(3._dp) 
+    child_4%origin(3) = O(3) + d/sqrt(3._dp) 
+    child_4%halfDim = d/2._dp
+    
+    child_5%origin(1) = O(1) + d/sqrt(3._dp) 
+    child_5%origin(2) = O(2) + d/sqrt(3._dp) 
+    child_5%origin(3) = O(3) - d/sqrt(3._dp) 
+    child_5%halfDim = d/2._dp
+    
+    child_6%origin(1) = O(1) + d/sqrt(3._dp) 
+    child_6%origin(2) = O(2) - d/sqrt(3._dp) 
+    child_6%origin(3) = O(3) - d/sqrt(3._dp) 
+    child_6%halfDim = d/2._dp
+
+    child_7%origin(1) = O(1) - d/sqrt(3._dp) 
+    child_7%origin(2) = O(2) - d/sqrt(3._dp) 
+    child_7%origin(3) = O(3) - d/sqrt(3._dp) 
+    child_7%halfDim = d/2._dp
+
+    child_8%origin(1) = O(1) - d/sqrt(3._dp)
+    child_8%origin(2) = O(2) + d/sqrt(3._dp)
+    child_8%origin(3) = O(3) - d/sqrt(3._dp)
+    child_8%halfDim = d/2._dp
   end subroutine
 
   subroutine get_octant(p, M, Next_M)
@@ -147,7 +163,7 @@ contains
     endif
   end subroutine
 
-  recursive subroutine getforce(M,p,F)
+  recursive subroutine calc_force(M,p,F)
     ! lists locations of particles contained in the tree
     real(dp),   intent(inout) :: F(:)
     type(part), intent(in)    :: p
@@ -163,8 +179,8 @@ contains
         dr = p%pos - M%particle%pos
         d = sqrt(sum(dr**2));
 
-        if (d>0.001_dp) then ! if particles are too close ignore
-          F = F - dr*m1*m2/(d**2+eps**2)**1.5_dp
+        if (d>0.0001_dp) then ! if particles are too close ignore
+          F = F - Gr*dr*m1*m2/(d**2+eps**2)**1.5_dp
         endif
       endif
     else 
@@ -175,16 +191,16 @@ contains
         ! we treat the node as a single particle 
         m1 = M%CM%mass
         m2 = p%mass
-        F = F - dr*m1*m2/(d**2 + eps**2)**1.5_dp
+        F = F - Gr*dr*m1*m2/(d**2 + eps**2)**1.5_dp
       else
-        call getforce(M%octant1,p,F)
-        call getforce(M%octant2,p,F)
-        call getforce(M%octant3,p,F)
-        call getforce(M%octant4,p,F)
-        call getforce(M%octant5,p,F)
-        call getforce(M%octant6,p,F)
-        call getforce(M%octant7,p,F)
-        call getforce(M%octant8,p,F)
+        call calc_force(M%octant1,p,F)
+        call calc_force(M%octant2,p,F)
+        call calc_force(M%octant3,p,F)
+        call calc_force(M%octant4,p,F)
+        call calc_force(M%octant5,p,F)
+        call calc_force(M%octant6,p,F)
+        call calc_force(M%octant7,p,F)
+        call calc_force(M%octant8,p,F)
       endif
     endif
   end subroutine

@@ -27,4 +27,8 @@ module treestructs
     type(node), pointer :: octant7 => null()
     type(node), pointer :: octant8 => null()
   end type
+
+  type node_array
+
+  end type
 end module
