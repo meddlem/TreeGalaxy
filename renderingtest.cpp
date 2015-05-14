@@ -12,7 +12,6 @@
 GLuint m_texStar;
 GLFWwindow* window;
 
-
 std::default_random_engine generator;
 std::normal_distribution<float> maxwell(0.0,1.0);
 
@@ -152,7 +151,7 @@ void Pre_Render()
 	initPointSpriteExt();
 }
 
-void Render(float **coord, int num)
+void Render(std::vector<part> coord, int num)
 {
 	col color;
 	int width, height;
@@ -231,10 +230,10 @@ void Render(float **coord, int num)
 	          {
 	          glPushMatrix();
 
-	          glTranslatef(coord[0][i],coord[1][i], coord[2][i]);
+	          glTranslatef(coord[i].x,coord[i].y, coord[i].z);
 
 	            glColor3f(color.r,color.g,color.b);
-	            glVertex3f(coord[0][i], coord[1][i], coord[2][i]);
+	            glVertex3f(coord[i].x, coord[i].y, coord[i].z);
 
 	            glPopMatrix();
 	          }

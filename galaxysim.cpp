@@ -18,18 +18,18 @@ void universe::update_position(){
   for (int i = 0; i < N; i++){
     m = pos_mass[i].mass;
 
-    pos_mass[i].x += vel[i].vx*dt + 0.5*force[i][0]*dt*dt/m;	
-    pos_mass[i].y += vel[i].vy*dt + 0.5*force[i][1]*dt*dt/m;	
-    pos_mass[i].z += vel[i].vz*dt + 0.5*force[i][2]*dt*dt/m;	
+    pos_mass[i].x += vel[i].vx*dt + 0.5*force[i].vx*dt*dt/m;	
+    pos_mass[i].y += vel[i].vy*dt + 0.5*force[i].vy*dt*dt/m;	
+    pos_mass[i].z += vel[i].vz*dt + 0.5*force[i].vz*dt*dt/m;	
   }
 }
 
 void universe::update_force(){
   // Initialize force
   for (int i = 0; i < N; ++i){
-    for (int j = 0; j<3; j++){
-    force[i][j] = 0.;
-    }
+    force[i].vx = 0.;
+    force[i].vy = 0.;
+    force[i].vz = 0.;
   }
 
   // start a new tree
@@ -43,7 +43,7 @@ void universe::update_force(){
   
   //calculate force on each particle
   for(int i = 0; i < N; i++){
-    root -> calcforce(&pos_mass[i],force[i]);
+    root -> calcforce(&pos_mass[i],&force[i]);
   }
   delete root;
 }
@@ -53,20 +53,8 @@ void universe::update_velocity(){
   for (int i = 0; i < N; i++){
     m = pos_mass[i].mass;
 
-    vel[i].vx += 0.5*force[i][0]*dt/m;
-    vel[i].vy += 0.5*force[i][1]*dt/m;
-    vel[i].vz += 0.5*force[i][2]*dt/m;
-  }
-}
-
-float** universe::get_pos(){
-  float ** out = 0;
-
-  for (int i = 0; i < 3; i++)
-  {
-    out[i]    = new float[N];
-    out[0][i] = pos_mass[i].x;
-    out[1][i] = pos_mass[i].y;
-    out[2][i] = pos_mass[i].z;
+    vel[i].vx += 0.5*force[i].vx*dt/m;
+    vel[i].vy += 0.5*force[i].vy*dt/m;
+    vel[i].vz += 0.5*force[i].vz*dt/m;
   }
 }

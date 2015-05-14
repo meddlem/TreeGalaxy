@@ -7,9 +7,7 @@ N(N), dt(dt)
 {
   pos_mass.resize(N);
   vel.resize(N);
-  for (int i = 0; i < N; i++){
-    force.push_back() 
-  }
+  force.resize(N); 
 }
 
 double frand(double low, double high){
@@ -73,6 +71,5 @@ void universe::generate_gal(int N_stars, part gal_pos_mass, part_vel gal_vel)
 
 		// Determine mass
 		pos_mass[i].mass = star_mass;
-    
 	}
 }

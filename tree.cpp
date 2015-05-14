@@ -99,7 +99,7 @@ void node::insert_particle(part* particle){
 }
 
 // calculates forces particles/ CMs on a given particle
-void node::calcforce(part* particle, double *force){
+void node::calcforce(part* particle, part_vel* force){
   if(isexternalnode()){
     if((particle_present != NULL) && (particle_present != particle)){ 
       // calculate force
@@ -111,9 +111,9 @@ void node::calcforce(part* particle, double *force){
       double m2 = particle->mass;
       
       // update total force
-      force[0] = force[0] - dx*m1*m2/pow(d*d + eps*eps,1.5); 
-      force[1] = force[1] - dy*m1*m2/pow(d*d + eps*eps,1.5); 
-      force[2] = force[2] - dz*m1*m2/pow(d*d + eps*eps,1.5); 
+      force->vx = force->vx - dx*m1*m2/pow(d*d + eps*eps,1.5); 
+      force->vy = force->vy - dy*m1*m2/pow(d*d + eps*eps,1.5); 
+      force->vz = force->vz - dz*m1*m2/pow(d*d + eps*eps,1.5); 
     }
   }
   else{
@@ -130,9 +130,9 @@ void node::calcforce(part* particle, double *force){
       double m2 = particle->mass;
 
       // update total force
-      force[0] = force[0] - dx*m1*m2/pow(d*d + eps*eps,1.5);
-      force[1] = force[1] - dy*m1*m2/pow(d*d + eps*eps,1.5); 
-      force[2] = force[2] - dz*m1*m2/pow(d*d + eps*eps,1.5); 
+      force->vx = force->vx - dx*m1*m2/pow(d*d + eps*eps,1.5);
+      force->vy = force->vy - dy*m1*m2/pow(d*d + eps*eps,1.5); 
+      force->vz = force->vz - dz*m1*m2/pow(d*d + eps*eps,1.5); 
     }
     else
     {

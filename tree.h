@@ -31,7 +31,7 @@ private:
   double dt;
 	std::vector<part> pos_mass; 
 	std::vector<part_vel> vel; 
-  std::vector<double*> force;
+  std::vector<part_vel> force;
 	
 public:
 	universe(int N, double dt);
@@ -43,7 +43,7 @@ public:
   void update_force();
   void update_position();
   double rootsize();
-  float** get_pos();
+  std::vector<part> get_pos(){return pos_mass;}
 };
 
 class node{
@@ -76,7 +76,7 @@ public:
     bool isexternalnode(void) const;
     int get_octant(const part* particle) const;
     void insert_particle(part* particle);
-    void calcforce(part* particle, double* force);
+    void calcforce(part* particle, part_vel* force);
 };
 
 #endif

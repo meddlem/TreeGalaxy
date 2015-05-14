@@ -14,12 +14,25 @@
 #include <GL/glu.h>
 #include <SDL/SDL.h>
 #include <GLFW/glfw3.h>
+
+#include <fstream>
+#include <random>
+#include <stdexcept>
+#include "tree.h"
+/*
 #include <stdio.h>
 #include <stdlib.h>
 #include <random>
 #include <stdexcept>
 #include <iostream>
 #include <fstream>
+*/
+
+struct col {
+	float r;
+	float g;
+	float b;
+};
 
 void initGL();
 void Initiate_Velocity();
@@ -28,19 +41,10 @@ void initPointSpriteExt();
 static void error_callback(int error, const char* description);
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void Pre_Render();
-void Render(float **coord, int num);
+void Render(std::vector<part> coord, int num);
 void Post_Render();
 
 extern GLuint m_texStar;
 extern GLFWwindow* window;
-
-struct col {
-	float r;
-	float g;
-	float b;
-};
-
-
-
 
 #endif /* RENDERING_H_ */

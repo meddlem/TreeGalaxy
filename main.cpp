@@ -7,7 +7,6 @@ int main(void){
   double dt = 0.05;	
   int tsteps = 1000; // Number of iterations
   int N = 81920; // number of particles in sim
-  float* out[3];
 
   // initialize the universe!
   universe uni(N,dt);
@@ -15,17 +14,16 @@ int main(void){
   uni.read_galaxy_data();
 
   Pre_Render();
-//  uni.get_pos();
-//  Render(out,N);
+  Render(uni.get_pos(),N);
   uni.update_force();
 
   for (int i = 0; i<tsteps; i++){		
+    std::cout << i << "\n";
     uni.update_position();	// Update the positio
     uni.update_velocity();	// Update the velocity
     uni.update_force();
     uni.update_velocity();	// Update the velocity
-    uni.get_pos();
-//    Render(out,N);
+    Render(uni.get_pos(),N);
   }
 
   Post_Render();
