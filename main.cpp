@@ -47,9 +47,10 @@ int main(){
   
   for (int i = 0; i<Run; i++){		
     uni.update_force();
-    uni.update_velocity_Plus();			// Update the velocity
+    uni.update_velocity_Plus();	// Update the velocity
     uni.update_position();	// Update the position
+    uni.get_pos();
   }
 
-  return 0;
+  return 0;	
 }
