@@ -197,7 +197,7 @@ contains
       dr = p%pos - M%CM%pos;  
       d = sqrt(sum(dr**2));
 
-      if (M%halfDim/d < theta) then
+      if (2._dp*M%halfDim/d < theta) then
         ! we treat the node as a single particle 
         m1 = M%CM%mass
         m2 = p%mass
