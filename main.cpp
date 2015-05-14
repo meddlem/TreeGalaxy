@@ -2,19 +2,26 @@
 #include "Rendering.h"
 using namespace std;
 
-double dt = 0.01;		// discrete time step
+double dt = 0.05;		// discrete time step
 int Run = 1000; 		// Number of simulations rounds
-const int N = 81920;
+const int N = 8096;
 
 float* out[3];
 std::vector<part> pos_mass; 
 std::vector<part_vel> vel; 
-std::vector<double*> force;
+double force[N][3];
+
 
 void allocate()
 {
-for (int i =0 ; i < 3 ;i++)
-      out[i]= new float[N];
+
+  //for (int i=0;i<N;i++){
+  //  force.push_back()
+  //}
+
+
+  for (int i =0 ; i < 3 ;i++)
+        out[i]= new float[N];
 }
 
 void get_pos(){
@@ -50,15 +57,13 @@ void update_position(){
 void update_force(){
 
   // Initialize force
-  for (int i = 0; i < N; ++i)
-  {
-    double f[3];
-    f[0] = 0.;
-    f[1] = 0.;
-    f[2] = 0.;
-    force[i] = f;
+  for (int i = 0; i < N; ++i){
+    for (int j = 0; j<3; j++){
+    force[i][j] = 0.;
+    }
   }
 
+  /*
   // start a new tree
   vector<double> origin (3,0);
   node* root = new node(rootsize(), origin, 1.0, 0.025);
@@ -72,13 +77,14 @@ void update_force(){
   for(int i = 0; i < N; i++){
     root -> calcforce(&pos_mass[i],force[i]);
   }
-  delete root;
+  delete root;*/
 }
 
 void update_velocity(){
   double m;
   for (int i = 0; i < N; i++){
     m = pos_mass[i].mass;
+    cout << force[i][0] << "\n";
 
     vel[i].vx = vel[i].vx + force[i][0]*dt/m;
     vel[i].vy = vel[i].vy + force[i][1]*dt/m;
@@ -89,10 +95,10 @@ void update_velocity(){
 int main(){
   pos_mass.resize(N);
 	vel.resize(N);
-	force.resize(N);
+	//force.resize(N);
   allocate();
 
-  ifstream input("dubinski.tab");
+  ifstream input("tab8096");
 
   int n = 0;
   while (n < N)
@@ -108,9 +114,9 @@ int main(){
   update_force();
 
   for (int i = 0; i<Run; i++){		
-    update_force();
-    update_velocity();	// Update the velocity
+    //update_force();
     update_position();	// Update the positio
+    update_velocity();	// Update the velocity
     get_pos();
     Render(out,N);
   }

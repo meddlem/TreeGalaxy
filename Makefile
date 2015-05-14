@@ -9,7 +9,7 @@ PROGRAM_NAME = program
 
 program: $(OBJS)
 	$(CC)  $(LFLAGS) $(OBJS)  -o $(PROGRAM_NAME) $(LIBS)
-renderingtest.o: Rendering.h
+renderingtest.o: Rendering.h renderingtest.cpp
 	$(CC) $(CFLAGS) renderingtest.cpp 
 init.o: init.cpp tree.h
 	$(CC) $(CFLAGS) init.cpp 
