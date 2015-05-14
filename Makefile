@@ -1,6 +1,6 @@
 FC = gfortran
-FFLAGS = -ffast-math -Wall -march=native -O3 -fopenmp #compiler flags
-LDFLAGS = -fopenmp #link flags
+FFLAGS = -ffast-math -Wall -march=native -O3 #compiler flags
+LDFLAGS = #link flags
 
 FFLAGS += $(shell pkg-config --cflags plplotd-f95)
 LIBS += $(shell pkg-config --libs plplotd-f95)
@@ -13,11 +13,11 @@ PROG = main #program name
 #required objects: 
 OBJS =
 OBJS += constants.o
-OBJS += io.o
+OBJS += treestructs.o
+OBJS += tree.o
 OBJS += initialize.o
 OBJS += interactions.o
 OBJS += plotroutines.o
-OBJS += main_functions.o
 OBJS += main.o
 
 all: $(PROG)
@@ -31,4 +31,4 @@ main: $(OBJS)
 .PHONY: clean
 clean:
 	$(RM) $(PROG) $(OBJS) *.mod
-	$(RM) plot*.png output.txt
+	$(RM) plot*.png output.txt *.out
