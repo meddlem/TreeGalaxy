@@ -28,21 +28,21 @@ struct part_vel {
 class universe{
 private: 
 	int N;
+    double dt;
 	std::vector<part> pos_mass; 
 	std::vector<part_vel> vel; 
+    std::vector<double*> force;
 	
 public:
-	universe(int N_total);
+	universe(int N_total, double dt);
 	~universe() {};
 
 	void generate_gal(int N_stars, part galaxy_position_mass, part_vel galaxy_velocity);
 	void print2file();
-	std::vector<part> get_pos_mass(){
-		return pos_mass;
-	} 
-	std::vector<part_vel> get_vel(){
-		return vel;
-	}
+    void update_velocity_Plus();
+    void update_force();
+    void update_position();
+    double rootsize();
 };
 
 class node{

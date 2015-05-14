@@ -2,11 +2,22 @@
 
 using namespace std;
 
-universe::universe(int N_total):
-N(0)
+universe::universe(int N_total, double dt):
+N(0), dt(dt)
 {
 	pos_mass.resize(N_total);
 	vel.resize(N_total);
+	force.resize(N_total);
+
+	// Initialize force with different pointers
+	for (int i = 0; i < N; ++i)
+	{
+		double f[3];
+		f[0] = 0.;
+		f[1] = 0.;
+		f[2] = 0.;
+		force[i] = f;
+	}
 }
 
 double frand(double low, double high){
