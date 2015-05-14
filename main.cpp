@@ -17,11 +17,6 @@ double force[N][3];
 void allocate()
 {
 
-  //for (int i=0;i<N;i++){
-  //  force.push_back()
-  //}
-
-
   for (int i =0 ; i < 3 ;i++)
         out[i]= new float[N];
 }
@@ -98,13 +93,11 @@ void update_velocity(){
 int main(){
   pos_mass.resize(N);
 	vel.resize(N);
-	//force.resize(N);
   allocate();
 
   ifstream input("dubinski.tab");
 
-  int n = 0;
-  while (n < N)
+  for(int n; n < N; n++)
   { 
     input >> pos_mass[n].mass >> pos_mass[n].x >> pos_mass[n].y >> 
       pos_mass[n].z >> vel[n].vx >> vel[n].vy >> vel[n].vz;
