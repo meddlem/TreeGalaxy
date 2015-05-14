@@ -2,26 +2,27 @@
 
 using namespace std;
 
-universe::universe(int N_total, double dt):
-N(0), dt(dt)
+universe::universe(int N, double dt):
+N(N), dt(dt)
 {
-	pos_mass.resize(N_total);
-	vel.resize(N_total);
-	force.resize(N_total);
-
-	// Initialize force with different pointers
-	for (int i = 0; i < N; ++i)
-	{
-		double f[3];
-		f[0] = 0.;
-		f[1] = 0.;
-		f[2] = 0.;
-		force[i] = f;
-	}
+  pos_mass.resize(N);
+  vel.resize(N);
+  for (int i = 0; i < N; i++){
+    force.push_back() 
+  }
 }
 
 double frand(double low, double high){
 	return low + (double)rand() * (high - low) / (double)RAND_MAX;
+}
+
+void universe::read_galaxy_data(){
+  ifstream input("dubinski.tab");
+
+  for(int n = 0; n<N; n++){ 
+    input >> pos_mass[n].mass >> pos_mass[n].x >> pos_mass[n].y >> 
+      pos_mass[n].z >> vel[n].vx >> vel[n].vy >> vel[n].vz;
+  }
 }
 
 void universe::generate_gal(int N_stars, part gal_pos_mass, part_vel gal_vel)
@@ -46,7 +47,6 @@ void universe::generate_gal(int N_stars, part gal_pos_mass, part_vel gal_vel)
 
 	// Plummer
 	
-	/*
 	for (int i = N_old; i < N; ++i)
 	{
     // Generate position
@@ -74,24 +74,5 @@ void universe::generate_gal(int N_stars, part gal_pos_mass, part_vel gal_vel)
 		// Determine mass
 		pos_mass[i].mass = star_mass;
     
-	}*/
-  ifstream input("dubinski.tab");
-
-    int n = 0;
-    while (n < N)
-    {
-      input >> pos_mass[n].mass >> pos_mass[n].z >> pos_mass[n].y >> pos_mass[n].x >> vel[n].vz >> vel[n].vy >> vel[n].vx;
-      n++;
-
-    }
-}
-
-void universe::print2file(){
-	ofstream file;
-		file.open ("galaxy.txt");
-		for (int i = 0; i < N; ++i)
-		{
-			file << pos_mass[i].x << ' ' << pos_mass[i].y<< ' ' << vel[i].vx<< ' ' << vel[i].vy << endl;
-		}
-		file.close();
+	}
 }

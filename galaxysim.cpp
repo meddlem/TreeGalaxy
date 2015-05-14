@@ -3,7 +3,7 @@ using namespace std;
 
 double universe::rootsize(){
   // returns needed size of root
-  double max = 0;
+  double max = 0.;
 
   for(int i=0; i<N; i++){
     if(abs(pos_mass[i].x) > max){max = abs(pos_mass[i].x);}
@@ -14,30 +14,27 @@ double universe::rootsize(){
 }
 
 void universe::update_position(){
+  double m; 
   for (int i = 0; i < N; i++){
-    pos_mass[i].x += vel[i].vx*dt;	// x(i) = x(i-1) + v(i)*dt
-    pos_mass[i].y += vel[i].vy*dt;	// x(i) = x(i-1) + v(i)*dt
-    pos_mass[i].z += vel[i].vz*dt;	// x(i) = x(i-1) + v(i)*dt
+    m = pos_mass[i].mass;
+
+    pos_mass[i].x += vel[i].vx*dt + 0.5*force[i][0]*dt*dt/m;	
+    pos_mass[i].y += vel[i].vy*dt + 0.5*force[i][1]*dt*dt/m;	
+    pos_mass[i].z += vel[i].vz*dt + 0.5*force[i][2]*dt*dt/m;	
   }
 }
 
 void universe::update_force(){
-
   // Initialize force
-  for (int i = 0; i < N; ++i)
-  {
-    double f[3];
-    f[0] = 0.;
-    f[1] = 0.;
-    f[2] = 0.;
-    force[i] = f;
+  for (int i = 0; i < N; ++i){
+    for (int j = 0; j<3; j++){
+    force[i][j] = 0.;
+    }
   }
 
   // start a new tree
   vector<double> origin (3,0);
-  double rootsz = rootsize();
-  cout << rootsz << "\n";
-  node* root = new node(rootsz, origin, 0.5, 0.025);
+  node* root = new node(rootsize(), origin, 0.9, 0.025);
 
   // insert particles into tree
   for(int i = 0; i<N; i++){
@@ -51,26 +48,25 @@ void universe::update_force(){
   delete root;
 }
 
-void universe::update_velocity_Plus(){
+void universe::update_velocity(){
+  double m;
   for (int i = 0; i < N; i++){
-    vel[i].vx = vel[i].vx + force[i][0]*dt;
-    vel[i].vy = vel[i].vy + force[i][1]*dt;
-    vel[i].vz = vel[i].vz + force[i][2]*dt;
+    m = pos_mass[i].mass;
+
+    vel[i].vx += 0.5*force[i][0]*dt/m;
+    vel[i].vy += 0.5*force[i][1]*dt/m;
+    vel[i].vz += 0.5*force[i][2]*dt/m;
   }
 }
 
-float ** get_pos(){
-  
-  float** out = 0;
-  out = new float*[N];
+float** universe::get_pos(){
+  float ** out = 0;
 
-  for (int i = 0; i < N; i++)
+  for (int i = 0; i < 3; i++)
   {
-    out[i] = new float[3];
-    out[i][0] = pos_mass[i].x;
-    out[i][1] = pos_mass[i].y;
-    out[i][2] = pos_mass[i].z;
+    out[i]    = new float[N];
+    out[0][i] = pos_mass[i].x;
+    out[1][i] = pos_mass[i].y;
+    out[2][i] = pos_mass[i].z;
   }
-
-  return out;
 }
