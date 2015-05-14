@@ -16,7 +16,6 @@ GLFWwindow* window;
 std::default_random_engine generator;
 std::normal_distribution<float> maxwell(0.0,1.0);
 
-
 static void error_callback(int error, const char* description)
 {
     fputs(description, stderr);
@@ -158,9 +157,10 @@ void Render(float **coord, int num)
 	col color;
 	int width, height;
 
-
-
-
+    // set colors
+    color.r = 0.5; //maxwell(generator);
+    color.g = 0.5; //maxwell(generator);
+    color.b = 0.8; //maxwell(generator);
 
 	  // start rendering
 
@@ -184,7 +184,7 @@ void Render(float **coord, int num)
 
 	       // gluPerspective(2, width/height,100, 1000);
 
-	       glScalef(0.05, 0.05, 0.05);
+          glScalef(0.05, 0.05, 0.05);
 	        //glEnable(GL_NORMALIZE);
 	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -222,7 +222,7 @@ void Render(float **coord, int num)
 
 	          //glLoadIdentity();
 
-	          glPointSize(20); //pStars[i].m_mag*10);
+	          glPointSize(10); //pStars[i].m_mag*10);
 	            glBegin(GL_POINTS);
 
 
@@ -233,10 +233,6 @@ void Render(float **coord, int num)
 
 	          glTranslatef(coord[0][i],coord[1][i], coord[2][i]);
 
-
-	          color.r=  maxwell(generator);
-	          color.g = maxwell(generator);
-	          color.b = maxwell(generator);
 	            glColor3f(color.r,color.g,color.b);
 	            glVertex3f(coord[0][i], coord[1][i], coord[2][i]);
 

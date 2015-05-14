@@ -59,7 +59,7 @@ void universe::update_velocity_Plus(){
   }
 }
 
-float ** universe::get_pos(){
+float ** get_pos(){
   
   float** out = 0;
   out = new float*[N];

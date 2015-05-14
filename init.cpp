@@ -80,9 +80,9 @@ void universe::generate_gal(int N_stars, part gal_pos_mass, part_vel gal_vel)
     int n = 0;
     while (n < N)
     {
-      input >> pos_mass[n].mass >> pos_mass[n].z >> pos_mass[n].y >> 
-        pos_mass[n].x >> vel[n].vz >> vel[n].vy >> vel[n].vx;
+      input >> pos_mass[n].mass >> pos_mass[n].z >> pos_mass[n].y >> pos_mass[n].x >> vel[n].vz >> vel[n].vy >> vel[n].vx;
       n++;
+
     }
 }
 
