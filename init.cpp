@@ -10,8 +10,8 @@ N(N), dt(dt)
   force.resize(N); 
 }
 
-void universe::read_galaxy_data(void){
-  ifstream input("dubinski.tab");
+void universe::read_galaxy_data(){
+  ifstream input("tab8096");
 
   for(int n = 0; n<N; n++){ 
     input >> pos_mass[n].mass >> pos_mass[n].x >> pos_mass[n].y >> 
@@ -23,7 +23,7 @@ double frand(double low, double high){
 	return low + (double)rand() * (high - low) / (double)RAND_MAX;
 }
 
-void universe::generate_galaxy(void)
+void universe::generate_galaxy()
 {
 
 	srand(time(NULL)); 
@@ -43,7 +43,7 @@ void universe::generate_galaxy(void)
 
 	// Plummer
 	
-	for (int i = N; i < N; ++i)
+	for (int i = 0; i < N; ++i)
 	{
     // Generate position
 		radius = radius0 / sqrt( pow(frand(0,1),(-2.0/3.0)) - 1.0);

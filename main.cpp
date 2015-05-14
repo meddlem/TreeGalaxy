@@ -3,16 +3,16 @@ using namespace std;
 
 int main(void){
 
-  double dt = 0.05;	 // Time step
+  double dt = 0.02;	 // Time step
   int tsteps = 1000; // Number of iterations
-  int N = 81920;     // Number of particles in sim
+  int N = 8096;     // Number of particles in sim
 
   // initialize the universe!
   universe uni(N,dt);
   // read initial positions, masses, velocities from file
-  uni.read_galaxy_data();
+  //uni.read_galaxy_data();
   // or calculate them from plummer dist
-  //uni.generate_galaxy();
+  uni.generate_galaxy();
   // initialize rendering
   Pre_Render();
   Render(uni.get_pos(),N);
