@@ -4,7 +4,7 @@ using namespace std;
 
 double dt = 0.05;		// discrete time step
 int Run = 1000; 		// Number of simulations rounds
-const int N = 8096;
+const int N = 81920;
 
 float* out[3];
 std::vector<part> pos_mass; 
@@ -46,11 +46,13 @@ double rootsize(){
 }
 
 void update_position(){
+  double m; 
   for (int i = 0; i < N; i++){
+    m = pos_mass[i].mass;
 
-    pos_mass[i].x += vel[i].vx*dt;	
-    pos_mass[i].y += vel[i].vy*dt;	
-    pos_mass[i].z += vel[i].vz*dt;	
+    pos_mass[i].x += vel[i].vx*dt + 0.5*force[i][0]*dt*dt/m;	
+    pos_mass[i].y += vel[i].vy*dt + 0.5*force[i][1]*dt*dt/m;	
+    pos_mass[i].z += vel[i].vz*dt + 0.5*force[i][2]*dt*dt/m;	
   }
 }
 
@@ -63,10 +65,10 @@ void update_force(){
     }
   }
 
-  /*
+  
   // start a new tree
   vector<double> origin (3,0);
-  node* root = new node(rootsize(), origin, 1.0, 0.025);
+  node* root = new node(rootsize(), origin, 0.9, 0.025);
 
   // insert particles into tree
   for(int i = 0; i<N; i++){
@@ -77,18 +79,18 @@ void update_force(){
   for(int i = 0; i < N; i++){
     root -> calcforce(&pos_mass[i],force[i]);
   }
-  delete root;*/
+  delete root;
 }
 
 void update_velocity(){
   double m;
   for (int i = 0; i < N; i++){
     m = pos_mass[i].mass;
-    cout << force[i][0] << "\n";
+//    cout << force[i][0] << "\n";
 
-    vel[i].vx = vel[i].vx + force[i][0]*dt/m;
-    vel[i].vy = vel[i].vy + force[i][1]*dt/m;
-    vel[i].vz = vel[i].vz + force[i][2]*dt/m;
+    vel[i].vx += 0.5*force[i][0]*dt/m;
+    vel[i].vy += 0.5*force[i][1]*dt/m;
+    vel[i].vz += 0.5*force[i][2]*dt/m;
   }
 }
 
@@ -98,7 +100,7 @@ int main(){
 	//force.resize(N);
   allocate();
 
-  ifstream input("tab8096");
+  ifstream input("dubinski.tab");
 
   int n = 0;
   while (n < N)
@@ -114,8 +116,9 @@ int main(){
   update_force();
 
   for (int i = 0; i<Run; i++){		
-    //update_force();
     update_position();	// Update the positio
+    update_velocity();	// Update the velocity
+    update_force();
     update_velocity();	// Update the velocity
     get_pos();
     Render(out,N);
