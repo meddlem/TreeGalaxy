@@ -13,7 +13,7 @@ module constants
   real(dp), parameter :: theta = 0.5_dp ! cutoff 
   
   integer, parameter :: steps = 30000
-  integer, parameter :: N = 10240
+  integer, parameter :: N = 20480
   
   logical, parameter :: prtplt = .true.
 end module
