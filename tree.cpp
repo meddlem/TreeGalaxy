@@ -107,7 +107,6 @@ void node::calcforce(part* particle, part_vel* force){
       double d = sqrt(dx*dx + dy*dy + dz*dz);    
       double m1 = particle_present->mass;
       double m2 = particle->mass;
-      if (d<0.0001) cout << "error\n";
       
       // update total force
       force->vx = force->vx - G*dx*m1*m2/pow(d*d + eps*eps,1.5); 
@@ -123,7 +122,7 @@ void node::calcforce(part* particle, part_vel* force){
     double d = sqrt(dx*dx + dy*dy + dz*dz);
 
     // check if s/d<theta
-    if ((halfDim/d) < theta){
+    if ((2.0*halfDim/d) < theta){
       // in this case treat node as a single particle, and calc force
       double m1 = CM.mass;
       double m2 = particle->mass;

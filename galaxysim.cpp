@@ -47,14 +47,14 @@ void universe::update_force(){
   }
   delete root;
   
-  cout << "tr: " << force[0].vx << " " << force[0].vy << " " << force[0].vz << "\n";
+  // cout << "tr: " << force[0].vx << " " << force[0].vy << " " << force[0].vz << "\n";
   // Initialize force
+  /* 
   for (int i = 0; i < N; ++i){
     force[i].vx = 0.;
     force[i].vy = 0.;
     force[i].vz = 0.;
   }
-  
   //direct calc
   double eps = 0.025;
   
@@ -77,7 +77,7 @@ void universe::update_force(){
     } 
   }
   cout <<"dir: " << force[0].vx << " " << force[0].vy << " " << force[0].vz << "\n";
-  
+  */ 
 }
 
 void universe::update_velocity(){

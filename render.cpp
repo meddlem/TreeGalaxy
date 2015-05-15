@@ -185,8 +185,8 @@ void Render(std::vector<part> coord, int num)
 
           glScalef(0.03, 0.03, 0.03);
 	        //glEnable(GL_NORMALIZE);
-	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	        //glRotatef((float)glfwGetTime()*5.f, 2.f, 4.f, 0.6f);        
+          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	        glBindTexture(GL_TEXTURE_2D, m_texStar);
 
 	         glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
@@ -221,7 +221,7 @@ void Render(std::vector<part> coord, int num)
 
 	          //glLoadIdentity();
 
-	          glPointSize(10); //pStars[i].m_mag*10);
+	          glPointSize(9); //pStars[i].m_mag*10);
 	            glBegin(GL_POINTS);
 
 

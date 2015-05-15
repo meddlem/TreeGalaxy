@@ -3,15 +3,15 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 
-  double dt = 0.05;	 // Time step
-  int tsteps = 1000; // Number of iterations
-  int N = 100;     // Number of particles in sim
+  double dt = 0.02;	 // Time step
+  int tsteps = 3000; // Number of iterations
+  int N = 1000;     // Number of particles in sim
   bool gen;
   
   for(int i = 1; i < argc; i++)
     if(std::string(argv[i]) == "--gen") gen = true;
   
-  if(!gen) N = 1024;
+  if(!gen) N = 20480;
 
   // initialize the universe!
   universe uni(N,dt);
