@@ -25,26 +25,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-/*
-void Initiate_position(){
-
-	for(int i = 0 ; i < 3; i++)
-			pos[i] = new float[N];
-
-std::ifstream input("test.txt");
-
-
-int n=0;
-while(n < 40000)
-{
-
-    input >> pos[0][n] >>  pos[1][n] >> pos[2][n];
- n++;
-
-}
-
-}
-*/
 
 
 void initGLFW()
@@ -138,7 +118,7 @@ extern "C" void Pre_Render()
 	initPointSpriteExt();
 }
 
-extern "C" void Render(std::vector<part> coord, int num)
+extern "C" void Render(float* coord, int num)
 {
 	col color;
 	int width, height;
@@ -213,14 +193,14 @@ extern "C" void Render(std::vector<part> coord, int num)
 
 
 
-	          for (int i=0; i<num; ++i)
+	          for (int i=0; i<3*num; i+=3)
 	          {
 	          glPushMatrix();
 
-	          glTranslatef(coord[i].x,coord[i].y, coord[i].z);
+	          glTranslatef(coord[i], coord[i+1], coord[i+2]);
 
 	            glColor3f(color.r,color.g,color.b);
-	            glVertex3f(coord[i].x, coord[i].y, coord[i].z);
+	            glVertex3f(coord[i], coord[i+1], coord[i+2]);
 
 	            glPopMatrix();
 	          }

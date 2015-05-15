@@ -9,7 +9,7 @@ program main
   implicit none
 
   interface 
-    subroutine render(p,N) bind(c,name='Render')
+    subroutine render(p, N) bind(c,name='Render')
       import :: c_int
       import :: c_ptr 
       type(c_ptr), value :: p
@@ -43,12 +43,14 @@ contains
 
     integer :: i, j
     real(c_float), allocatable, target :: rc(:,:)
-    real(c_float), target :: rcx(3,N)
+    real(c_float), target :: rcx(N,3)
+    integer(c_int) :: NC
     type(c_ptr) :: cptr
     logical :: prtplt = .true.
 
-    allocate(rc(3,N))
+    allocate(rc(N,3))
     cptr = c_loc(rc(1,1))
+    NC = N
 
     call force(F,r)
     !if(prtplt) call particle_plot_init(-20._dp, 20._dp)
@@ -56,12 +58,12 @@ contains
     
     do i = 1,steps
       ! plot particle positions
-      !if(prtplt .and. mod(i,10)==0) call particle_plot(r) 
       do j = 1,N
-        rc(:,j) = r(j)%pos
+        rc(j,:) = r(j)%pos
       enddo
 
       call render(cptr,N)
+
       ! time integration using the "velocity Verlet" algorithm: 
       do j = 1,N
         ! update positions
