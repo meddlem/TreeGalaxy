@@ -1,4 +1,5 @@
 program main
+  use iso_c_binding
   use constants 
   use treestructs
   use initialize 
@@ -7,11 +8,30 @@ program main
   use plplot, only : plend  
   implicit none
 
+  interface 
+    subroutine render(p,N) bind(c,name='Render')
+      import :: c_int
+      import :: c_ptr 
+      type(c_ptr), value :: p
+      integer(c_int), value :: N
+    end subroutine
+  end interface
+
+  interface 
+    subroutine pre_render() bind(c,name='Pre_Render')
+    end subroutine
+  end interface
+
+  interface 
+    subroutine post_render() bind(c,name='Post_Render')
+    end subroutine
+  end interface
+
   real(dp), allocatable   :: v(:,:), F(:,:) 
   type(part), allocatable :: r(:)
-  
-  allocate(r(N), v(N,3), F(N,3))
 
+  allocate(r(N), v(N,3), F(N,3))
+  
   call init(r,v)
   call run_sim(r, v, F)
 
@@ -22,14 +42,26 @@ contains
     real(dp), intent(inout)   :: v(:,:), F(:,:)
 
     integer :: i, j
+    real(c_float), allocatable, target :: rc(:,:)
+    real(c_float), target :: rcx(3,N)
+    type(c_ptr) :: cptr
     logical :: prtplt = .true.
-    
+
+    allocate(rc(3,N))
+    cptr = c_loc(rc(1,1))
+
     call force(F,r)
-    if(prtplt) call particle_plot_init(-20._dp, 20._dp)
+    !if(prtplt) call particle_plot_init(-20._dp, 20._dp)
+    call pre_render()
     
     do i = 1,steps
       ! plot particle positions
-      if(prtplt .and. mod(i,10)==0) call particle_plot(r) 
+      !if(prtplt .and. mod(i,10)==0) call particle_plot(r) 
+      do j = 1,N
+        rc(:,j) = r(j)%pos
+      enddo
+
+      call render(cptr,N)
       ! time integration using the "velocity Verlet" algorithm: 
       do j = 1,N
         ! update positions
@@ -47,7 +79,8 @@ contains
       enddo
     enddo
     
-  call plend()
+  call post_render()
 
   end subroutine
+
 end program main 
