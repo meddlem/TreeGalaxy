@@ -92,9 +92,9 @@ void universe::generate_galaxy()
 		theta = acos(frand(-1, 1));
 		phi = frand(0, 2*PI);
 
-		vel[i].vx = -2. + velocity * sin( theta ) * cos( phi );
-		vel[i].vy = 0.2 + velocity * sin( theta ) * sin( phi );
-		vel[i].vz = velocity * cos( theta );
+		vel[i].vx = -1.5 + velocity * sin( theta ) * cos( phi );
+		vel[i].vy = 0.1 + velocity * sin( theta ) * sin( phi );
+		vel[i].vz = -0.05 + velocity * cos( theta );
 
 		// Determine mass
 		pos_mass[i].mass = star_mass;

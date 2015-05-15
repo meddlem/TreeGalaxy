@@ -5,7 +5,7 @@ int main(int argc, char* argv[]){
 
   double dt = 0.02;	 // Time step
   int tsteps = 3000; // Number of iterations
-  int N = 1000;     // Number of particles in sim
+  int N = 2000;     // Number of particles in sim
   bool gen;
   
   for(int i = 1; i < argc; i++)

@@ -221,7 +221,7 @@ void Render(std::vector<part> coord, int num)
 
 	          //glLoadIdentity();
 
-	          glPointSize(9); //pStars[i].m_mag*10);
+	          glPointSize(6); //pStars[i].m_mag*10);
 	            glBegin(GL_POINTS);
 
 
