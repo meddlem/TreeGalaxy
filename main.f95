@@ -43,12 +43,12 @@ contains
 
     integer :: i, j
     real(c_float), allocatable, target :: rc(:,:)
-    real(c_float), target :: rcx(N,3)
+    real(c_float), target :: rcx(3,N)
     integer(c_int) :: NC
     type(c_ptr) :: cptr
     logical :: prtplt = .true.
 
-    allocate(rc(N,3))
+    allocate(rc(3,N))
     cptr = c_loc(rc(1,1))
     NC = N
 
@@ -59,7 +59,7 @@ contains
     do i = 1,steps
       ! plot particle positions
       do j = 1,N
-        rc(j,:) = r(j)%pos
+        rc(:,j) = r(j)%pos
       enddo
 
       call render(cptr,N)
