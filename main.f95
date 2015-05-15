@@ -3,9 +3,9 @@ program main
   use constants 
   use treestructs
   use initialize 
-  use plotroutines 
+!  use plotroutines 
   use interactions 
-  use plplot, only : plend  
+!  use plplot, only : plend  
   implicit none
 
   interface 
