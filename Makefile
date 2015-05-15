@@ -1,12 +1,8 @@
-FC = gfortran
-FFLAGS = -ffast-math -Wall -march=native -O3 #compiler flags
-LDFLAGS = #link flags
-
-FFLAGS += $(shell pkg-config --cflags plplotd-f95)
-LIBS += $(shell pkg-config --libs plplotd-f95)
-
-COMPILE = $(FC) $(FFLAGS)
-LINK = $(FC) $(LDFLAGS)
+F90 = gfortran
+CPP = g++
+CPPFLAGS = -std=c++11
+CPPLIBS = -lgfortran -lGLEW -lGL -lSDL -lGLU -lglfw 
+F90FLAGS = -ffast-math -Wall -march=native -O3 #compiler flags
 
 PROG = main #program name
 
@@ -17,16 +13,20 @@ OBJS += treestructs.o
 OBJS += tree.o
 OBJS += initialize.o
 OBJS += interactions.o
-OBJS += plotroutines.o
+OBJS += render.o
 OBJS += main.o
+
 
 all: $(PROG)
 
-main: $(OBJS)
-	$(LINK) -o $@ $^ $(LIBS)
+main: $(OBJS) 
+	$(CPP) -o $@ $^ $(CPPLIBS)
 
 %.o: %.f95
-	$(COMPILE) -o $@ -c $<
+	$(F90) $(F90FLAGS) -o $@ -c $<
+
+%.o: %.cpp
+	$(CPP) $(CPPFLAGS) $(CPPLIBS) -o $@ -c $<
 
 .PHONY: clean
 clean:
