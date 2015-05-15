@@ -78,7 +78,7 @@ void universe::generate_galaxy()
 		radius = radius0 / sqrt( pow(frand(0,1),(-2.0/3.0)) - 1.0);
 		theta = acos(frand(-1, 1));
 		phi = frand(0, 2*PI);
-		pos_mass[i].x = 30. + radius * sin( theta ) * cos( phi );
+		pos_mass[i].x = 20. + radius * sin( theta ) * cos( phi );
 		pos_mass[i].y = radius * sin( theta ) * sin( phi );
 		pos_mass[i].z = radius * cos( theta );
     

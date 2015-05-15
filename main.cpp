@@ -3,9 +3,9 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 
-  double dt = 0.02;	 // Time step
+  double dt = 0.05;	 // Time step
   int tsteps = 3000; // Number of iterations
-  int N = 2000;     // Number of particles in sim
+  int N = 5000;     // Number of particles in sim
   bool gen;
   
   for(int i = 1; i < argc; i++)
