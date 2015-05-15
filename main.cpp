@@ -1,18 +1,30 @@
 #include "headers.h"
 using namespace std;
 
-int main(void){
+int main(int argc, char* argv[]){
 
   double dt = 0.02;	 // Time step
   int tsteps = 1000; // Number of iterations
   int N = 8096;     // Number of particles in sim
+  bool gen;
+  
+  for(int i = 1; i < argc; i++)
+    if(std::string(argv[i]) == "--gen") gen = true;
+  
+  if(!gen) N = 81920;
 
   // initialize the universe!
   universe uni(N,dt);
-  // read initial positions, masses, velocities from file
-  //uni.read_galaxy_data();
-  // or calculate them from plummer dist
-  uni.generate_galaxy();
+
+  if(gen){
+    // calculate initial positions, masses, velocities from plummer dist
+    uni.generate_galaxy();
+  }
+  else{
+    // or read them from a data file
+    uni.read_galaxy_data();
+  }
+
   // initialize rendering
   Pre_Render();
   Render(uni.get_pos(),N);
