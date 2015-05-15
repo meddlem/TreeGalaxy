@@ -11,11 +11,13 @@ N(N), dt(dt)
 }
 
 void universe::read_galaxy_data(){
-  ifstream input("dubinski2.tab");
+  ifstream input("tab1024");
 
   for(int n = 0; n<N; n++){ 
     input >> pos_mass[n].mass >> pos_mass[n].x >> pos_mass[n].y >> 
       pos_mass[n].z >> vel[n].vx >> vel[n].vy >> vel[n].vz;
+  // take into account that we are omitting massses
+  //pos_mass[n].mass = 4.*pos_mass[n].mass; 
   }
 }
 

@@ -183,7 +183,7 @@ void Render(std::vector<part> coord, int num)
 
 	       // gluPerspective(2, width/height,100, 1000);
 
-          glScalef(0.03, 0.03, 0.03);
+          glScalef(0.05, 0.05, 0.05);
 	        //glEnable(GL_NORMALIZE);
 	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
