@@ -31,10 +31,10 @@ void universe::update_force(){
     force[i].vy = 0.;
     force[i].vz = 0.;
   }
-  
+   
   // start a new tree
   vector<double> origin (3,0);
-  node* root = new node(rootsize(), origin, 0.25, 0.025);
+  node* root = new node(rootsize(), origin, 0.3, 0.025);
 
   // insert particles into tree
   for(int i = 0; i<N; i++){
@@ -46,9 +46,16 @@ void universe::update_force(){
     root -> calcforce(&pos_mass[i],&force[i]);
   }
   delete root;
-  //direct calc
   
-  /* 
+  cout << "tr: " << force[0].vx << " " << force[0].vy << " " << force[0].vz << "\n";
+  // Initialize force
+  for (int i = 0; i < N; ++i){
+    force[i].vx = 0.;
+    force[i].vy = 0.;
+    force[i].vz = 0.;
+  }
+  
+  //direct calc
   double eps = 0.025;
   
   for(int i = 0; i < N; i++){
@@ -69,7 +76,8 @@ void universe::update_force(){
       }
     } 
   }
-  */
+  cout <<"dir: " << force[0].vx << " " << force[0].vy << " " << force[0].vz << "\n";
+  
 }
 
 void universe::update_velocity(){

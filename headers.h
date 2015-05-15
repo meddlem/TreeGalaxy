@@ -71,6 +71,10 @@ public:
     node(const double halfDim, const std::vector<double> origin, 
         const double theta, const double eps):origin(origin), 
         halfDim(halfDim), theta(theta), eps(eps), particle_present(NULL){
+      CM.mass = 0.;
+      CM.x = 0.;
+      CM.y = 0.;
+      CM.z = 0.;
       for (int i=0; i<8; i++){
         octant[i] = NULL;
       }

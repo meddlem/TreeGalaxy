@@ -123,7 +123,7 @@ void node::calcforce(part* particle, part_vel* force){
     double d = sqrt(dx*dx + dy*dy + dz*dz);
 
     // check if s/d<theta
-    if ((2*halfDim/d) < theta){
+    if ((halfDim/d) < theta){
       // in this case treat node as a single particle, and calc force
       double m1 = CM.mass;
       double m2 = particle->mass;

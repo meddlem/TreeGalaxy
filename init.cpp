@@ -16,8 +16,8 @@ void universe::read_galaxy_data(){
   for(int n = 0; n<N; n++){ 
     input >> pos_mass[n].mass >> pos_mass[n].x >> pos_mass[n].y >> 
       pos_mass[n].z >> vel[n].vx >> vel[n].vy >> vel[n].vz;
-  // take into account that we are omitting massses
-  //pos_mass[n].mass = 4.*pos_mass[n].mass; 
+  // take into account that we are omitting masses
+  // pos_mass[n].mass = 4.*pos_mass[n].mass; 
   }
 }
 
