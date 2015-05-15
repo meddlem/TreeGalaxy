@@ -34,7 +34,7 @@ void universe::update_force(){
 
   // start a new tree
   vector<double> origin (3,0);
-  node* root = new node(rootsize(), origin, 0.5, 0.035);
+  node* root = new node(rootsize(), origin, 0.9, 0.00035);
 
   // insert particles into tree
   for(int i = 0; i<N; i++){

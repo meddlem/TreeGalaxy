@@ -3,7 +3,7 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 
-  double dt = 0.02;	 // Time step
+  double dt = 0.05;	 // Time step
   int tsteps = 1000; // Number of iterations
   int N = 8096;     // Number of particles in sim
   bool gen;
@@ -11,7 +11,7 @@ int main(int argc, char* argv[]){
   for(int i = 1; i < argc; i++)
     if(std::string(argv[i]) == "--gen") gen = true;
   
-  if(!gen) N = 81920;
+  if(!gen) N = 20480;
 
   // initialize the universe!
   universe uni(N,dt);
