@@ -1,14 +1,4 @@
-//============================================================================
-// Name        : renderingtest.cpp
-// Author      : Sarwan Peiter
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
-
 #include "headers.h"
-//float *pos[3];
-//const int N=40000;
 GLuint m_texStar;
 GLFWwindow* window;
 
@@ -21,33 +11,31 @@ static void error_callback(int error, const char* description)
 }
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
+  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+      glfwSetWindowShouldClose(window, GL_TRUE);
 }
-
-
 
 void initGLFW()
 {
 	glfwSetErrorCallback(error_callback);
-	    if (!glfwInit())
-	        exit(EXIT_FAILURE);
-	    window = glfwCreateWindow(2560, 1440, "Colliding Galaxy Simulation", NULL, NULL);
+    if (!glfwInit())
+        exit(EXIT_FAILURE);
+    window = glfwCreateWindow(2560, 1440, "Colliding Galaxy Simulation", NULL, NULL);
 
-	    if (!window)
-	    {
-	        glfwTerminate();
-	        exit(EXIT_FAILURE);
-	    }
+    if (!window)
+    {
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
 
-	    // make current window OPENGL context or else OPENGL will not work
-	    glfwMakeContextCurrent(window);
+    // make current window OPENGL context or else OPENGL will not work
+    glfwMakeContextCurrent(window);
 
-	    // time interval at which the render buffer(back buffer) is brought to the front buffer
-	    glfwSwapInterval(1);
+    // time interval at which the render buffer(back buffer) is brought to the front buffer
+    glfwSwapInterval(1);
 
-	    //terminate when escape-key is pressed
-	    glfwSetKeyCallback(window, key_callback);
+    //terminate when escape-key is pressed
+    glfwSetKeyCallback(window, key_callback);
 }
 
 /* Initialize OpenGL Graphics */
@@ -73,7 +61,7 @@ void initPointSpriteExt()
 	  // get the number of channels in the SDL surface
 	  GLint  nOfColors = tex->format->BytesPerPixel;
 	  GLenum texture_format;
-	  if (nOfColors == 4)     // contains an alpha channel
+    if (nOfColors == 4)     // contains an alpha channel
 	  {
 	    if ( tex->format->Rmask == 0x000000ff)
 	      texture_format = GL_RGBA;
@@ -100,14 +88,14 @@ void initPointSpriteExt()
 
 		// Edit the texture object's image data using the information SDL_Surface gives us
 		glTexImage2D(GL_TEXTURE_2D,
-		             0,
-		             nOfColors,
-		             tex->w,
-		             tex->h,
-		             0,
-	               texture_format,
-	               GL_UNSIGNED_BYTE,
-	               tex->pixels );
+      0,
+      nOfColors,
+      tex->w,
+      tex->h,
+      0,
+      texture_format,
+      GL_UNSIGNED_BYTE,
+      tex->pixels );
 
 }
 
@@ -123,98 +111,79 @@ extern "C" void Render(float* coord, int num)
 	col color;
 	int width, height;
 
-    // set colors
-    color.r = 0.5; //maxwell(generator);
-    color.g = 0.5; //maxwell(generator);
-    color.b = 0.8; //maxwell(generator);
+  // set colors
+  color.r = 0.5; 
+  color.g = 0.5; 
+  color.b = 0.8; 
 
-	  // start rendering
+  // start rendering
 
-	    float maxSize = 0.0f;
+  float maxSize = 0.0f;
 
-	    //------------------------------rendering------------------
-	    //while (!glfwWindowShouldClose(window) && j < it)
+  glfwGetFramebufferSize(window, &width, &height); // not important
 
-	    //{
+  glViewport(0, 0, width, height);  // view settings
 
+  glLoadIdentity();
 
+  glMatrixMode( GL_MODELVIEW );
 
+   // gluPerspective(2, width/height,100, 1000);
 
-	        glfwGetFramebufferSize(window, &width, &height); // not important
+  glScalef(0.05, 0.05, 0.05);
+   //glEnable(GL_NORMALIZE);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	        glViewport(0, 0, width, height);  // view settings
+  glBindTexture(GL_TEXTURE_2D, m_texStar);
 
-	        glLoadIdentity();
+  glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
+  // glPointParameterfARB(GL_POINT_SIZE_MAX_ARB, maxSize);
+   //glPointParameterfARB(GL_POINT_SIZE_MIN_ARB, 1.0f);
+  glTexEnvf(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
 
-	        glMatrixMode( GL_MODELVIEW );
+  glEnable(GL_POINT_SPRITE_ARB);
+  glEnable(GL_TEXTURE_2D);       // point sprite texture support
+  glEnable(GL_BLEND);            // soft blending of point sprites
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	       // gluPerspective(2, width/height,100, 1000);
+    // Render a color-cube consisting of 6 quads with different colors
 
-          glScalef(0.05, 0.05, 0.05);
-	        //glEnable(GL_NORMALIZE);
-	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   // glMatrixMode(GL_MODELVIEW);
+  glBindTexture(GL_TEXTURE_2D, m_texStar);
 
-	        glBindTexture(GL_TEXTURE_2D, m_texStar);
+  glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
+  //glPointParameterfARB(GL_POINT_SIZE_MAX_ARB, maxSize);
+  //glPointParameterfARB(GL_POINT_SIZE_MIN_ARB, 1.0f);
+  glTexEnvf(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
 
-	         glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
-	        // glPointParameterfARB(GL_POINT_SIZE_MAX_ARB, maxSize);
-	         //glPointParameterfARB(GL_POINT_SIZE_MIN_ARB, 1.0f);
-	         glTexEnvf(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
-
-	         glEnable(GL_POINT_SPRITE_ARB);
-	         glEnable(GL_TEXTURE_2D);       // point sprite texture support
-	         glEnable(GL_BLEND);            // soft blending of point sprites
-	         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-	          // Render a color-cube consisting of 6 quads with different colors
-
-
-
-
-
-	       // glMatrixMode(GL_MODELVIEW);
-	          glBindTexture(GL_TEXTURE_2D, m_texStar);
-
-	          glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
-	          //glPointParameterfARB(GL_POINT_SIZE_MAX_ARB, maxSize);
-	          //glPointParameterfARB(GL_POINT_SIZE_MIN_ARB, 1.0f);
-	          glTexEnvf(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
-
-	          glEnable(GL_POINT_SPRITE_ARB);
-	          glEnable(GL_TEXTURE_2D);       // point sprite texture support
-	          glEnable(GL_BLEND);            // soft blending of point sprites
-	          glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+  glEnable(GL_POINT_SPRITE_ARB);
+  glEnable(GL_TEXTURE_2D);       // point sprite texture support
+  glEnable(GL_BLEND);            // soft blending of point sprites
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 
-	          //glLoadIdentity();
+  //glLoadIdentity();
 
-	          glPointSize(10); //pStars[i].m_mag*10);
-	            glBegin(GL_POINTS);
-
-
-
-	          for (int i=0; i<3*num; i+=3)
-	          {
-	          glPushMatrix();
-
-	          glTranslatef(coord[i], coord[i+1], coord[i+2]);
-
-	            glColor3f(color.r,color.g,color.b);
-	            glVertex3f(coord[i], coord[i+1], coord[i+2]);
-
-	            glPopMatrix();
-	          }
-	          glEnd();
+  glPointSize(5); //pStars[i].m_mag*10);
+    glBegin(GL_POINTS);
 
 
-	          glDisable(GL_POINT_SPRITE_ARB);
-	          glDisable(GL_BLEND);
-	          glDisable(GL_TEXTURE_2D);
+  for (int i=0; i<3*num; i+=3){
+    glPushMatrix();
+    glTranslatef(coord[i], coord[i+1], coord[i+2]);
+    glColor3f(color.r,color.g,color.b);
+    glVertex3f(coord[i], coord[i+1], coord[i+2]);
+    glPopMatrix();
+  }
+  
+  glEnd();
 
-	        glfwSwapBuffers(window);
-	        glfwPollEvents();
-	    //}
+  glDisable(GL_POINT_SPRITE_ARB);
+  glDisable(GL_BLEND);
+  glDisable(GL_TEXTURE_2D);
 
+  glfwSwapBuffers(window);
+  glfwPollEvents();
 
 }
 
@@ -224,129 +193,3 @@ extern "C" void Post_Render()
 	glfwDestroyWindow(window);
     glfwTerminate();
 }
-
-/*
-int main(void)
-{
-//col color;
-int j =0;
-Initiate_position();
-
-Pre_Render();
-while ( j<1)
-		{	Render(pos , N);
-
-		j++;
-		}
-
-Post_Render();
-*/
-	// ----------make opengl window context-----------------------------
-/*
- initGLFW();
- initGL();
- initPointSpriteExt();
-
- int width, height;
-
-  // start rendering
-
-    float maxSize = 0.0f;
-    int j=0;
-    //------------------------------rendering------------------
-    while (!glfwWindowShouldClose(window) && j < 10000)
-
-    {
-
-
-
-
-        glfwGetFramebufferSize(window, &width, &height); // not important
-
-        glViewport(0, 0, width, height);  // view settings
-
-        glMatrixMode( GL_PROJECTION );
-        glLoadIdentity();
-       // gluPerspective(2, width/height,100, 1000);
-
-        glScalef(0.08, 0.08, 0.08);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glBindTexture(GL_TEXTURE_2D, m_texStar);
-
-         glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
-        // glPointParameterfARB(GL_POINT_SIZE_MAX_ARB, maxSize);
-         //glPointParameterfARB(GL_POINT_SIZE_MIN_ARB, 1.0f);
-         glTexEnvf(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
-
-         glEnable(GL_POINT_SPRITE_ARB);
-         glEnable(GL_TEXTURE_2D);       // point sprite texture support
-         glEnable(GL_BLEND);            // soft blending of point sprites
-         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-          // Render a color-cube consisting of 6 quads with different colors
-
-
-
-
-
-       // glMatrixMode(GL_MODELVIEW);
-          glBindTexture(GL_TEXTURE_2D, m_texStar);
-
-          glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
-          //glPointParameterfARB(GL_POINT_SIZE_MAX_ARB, maxSize);
-          //glPointParameterfARB(GL_POINT_SIZE_MIN_ARB, 1.0f);
-          glTexEnvf(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
-
-          glEnable(GL_POINT_SPRITE_ARB);
-          glEnable(GL_TEXTURE_2D);       // point sprite texture support
-          glEnable(GL_BLEND);            // soft blending of point sprites
-          glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-
-          //glLoadIdentity();
-
-          glPointSize(13); //pStars[i].m_mag*10);
-            glBegin(GL_POINTS);
-
-
-
-          for (int i=0; i<N; ++i)
-          {
-          glPushMatrix();
-
-          glTranslatef(pos[0][i],pos[1][i], pos[2][i]);
-
-
-          color.r=  maxwell(generator);
-          	          color.g = maxwell(generator);
-          	          color.b = maxwell(generator);
-            glColor3f(color.r,color.g,color.b);
-            glVertex3f(pos[0][i], pos[1][i], pos[2][i]*0.01);
-
-            glPopMatrix();
-          }
-          glEnd();
-
-
-          glDisable(GL_POINT_SPRITE_ARB);
-          glDisable(GL_BLEND);
-          glDisable(GL_TEXTURE_2D);
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-
-
-
-    glDeleteTextures(1,&m_texStar);
-    glfwDestroyWindow(window);
-    glfwTerminate();
-*/
-
-
-   // for(int i =0 ;i <3 ;i++)
-
-    //	delete [] pos[i];
-//    exit(EXIT_SUCCESS);
-//}

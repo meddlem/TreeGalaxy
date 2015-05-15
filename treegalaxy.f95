@@ -1,13 +1,12 @@
-program main
+program treegalaxy
   use iso_c_binding
   use constants 
   use treestructs
   use initialize 
-!  use plotroutines 
   use interactions 
-!  use plplot, only : plend  
   implicit none
 
+  ! define interfaces to the C++ code (used for plotting with openGL)
   interface 
     subroutine render(p, N) bind(c,name='Render')
       import :: c_int
@@ -15,24 +14,22 @@ program main
       type(c_ptr), value :: p
       integer(c_int), value :: N
     end subroutine
-  end interface
 
-  interface 
     subroutine pre_render() bind(c,name='Pre_Render')
     end subroutine
-  end interface
 
-  interface 
     subroutine post_render() bind(c,name='Post_Render')
     end subroutine
   end interface
+
+  ! main program
 
   real(dp), allocatable   :: v(:,:), F(:,:) 
   type(part), allocatable :: r(:)
 
   allocate(r(N), v(N,3), F(N,3))
   
-  call init(r,v)
+  call init(r, v)
   call run_sim(r, v, F)
 
 contains 
@@ -58,12 +55,10 @@ contains
       do j = 1,N
         rc(:,j) = real(r(j)%pos)
       enddo
-
-      call render(cptr,N)
+      call render(cptr, N)
 
       ! time integration using the "velocity Verlet" algorithm: 
       do j = 1,N
-        ! update positions
         r(j)%pos = r(j)%pos + v(j,:)*dt + 0.5_dp*F(j,:)*(dt**2)/r(j)%mass
       enddo
 
@@ -71,7 +66,7 @@ contains
         v(j,:) = v(j,:) + 0.5_dp*F(j,:)*dt/r(j)%mass ! update momentum (1/2)
       enddo
 
-      call force(F,r) ! update force
+      call force(F, r) 
       
       do j = 1,N
         v(j,:) = v(j,:) + 0.5_dp*F(j,:)*dt/r(j)%mass ! update momentum (1/2)
@@ -81,5 +76,4 @@ contains
   call post_render()
 
   end subroutine
-
-end program main 
+end program 
