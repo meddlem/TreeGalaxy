@@ -14,5 +14,5 @@ module constants
   real(dp), parameter :: Gr = 1._dp ! gravitational constant
   
   integer, parameter :: steps = 30000 ! number of timesteps
-  integer, parameter :: N = 20480 ! number of stars
+  integer, parameter :: N = 40960 ! number of stars
 end module
