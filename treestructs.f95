@@ -17,7 +17,7 @@ module treestructs
     logical  :: contains_particle = .false. 
     logical  :: leaf_node = .true.
 
-    ! pointers to 4 subnodes
+    ! pointers to 8 subnodes
     type(node), pointer :: octant1 => null()
     type(node), pointer :: octant2 => null()
     type(node), pointer :: octant3 => null()
@@ -26,9 +26,5 @@ module treestructs
     type(node), pointer :: octant6 => null()
     type(node), pointer :: octant7 => null()
     type(node), pointer :: octant8 => null()
-  end type
-
-  type node_array
-
   end type
 end module

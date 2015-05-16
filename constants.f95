@@ -1,7 +1,6 @@
 module constants
   implicit none
   ! module contains all constants used in the program
-  ! units: eps=1, sigma=1, m=1
   
   ! NOTE: IF YOU MAKE ANY CHANGES HERE RECOMPILE ALL MODULES: "make -B" 
   integer, parameter :: dp = selected_real_kind(15,307)
