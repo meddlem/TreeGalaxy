@@ -9,7 +9,7 @@ contains
   subroutine init(r,v) 
     type(part), intent(inout) :: r(:)
     real(dp), intent(inout)   :: v(:,:)
-    integer :: i, j
+    integer :: i
 
     ! read data from Dubinski 1995, only take one of 4 points
     open(10, file='dubinski.tab')
