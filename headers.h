@@ -2,6 +2,7 @@
 #define headers_H
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <cmath>
@@ -35,14 +36,14 @@ struct col {
 };
 
 void initGL();
-void Initiate_Velocity();
 void initGLFW();
 void initPointSpriteExt();
 static void error_callback(int error, const char* description);
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 extern "C" void Pre_Render();
-extern "C" void Render(float* coord, int num);
+extern "C" void Render(float* coord, int num, int frame);
 extern "C" void Post_Render();
+void screenshot(int x, int y, int frame);
 
 extern GLuint m_texStar;
 extern GLFWwindow* window;

@@ -8,11 +8,12 @@ program treegalaxy
 
   ! define interfaces to the C++ code (used for plotting with openGL)
   interface 
-    subroutine render(p, N) bind(c,name='Render')
+    subroutine render(p, N, iter) bind(c,name='Render')
       import :: c_int
       import :: c_ptr 
       type(c_ptr), value :: p
       integer(c_int), value :: N
+      integer(c_int), value :: iter
     end subroutine
 
     subroutine pre_render() bind(c,name='Pre_Render')
@@ -55,7 +56,7 @@ contains
       do j = 1,N
         rc(:,j) = real(r(j)%pos)
       enddo
-      call render(cptr, N)
+      call render(cptr, N, i)
 
       ! time integration using the "velocity Verlet" algorithm: 
       do j = 1,N

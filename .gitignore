@@ -4,4 +4,5 @@ main
 *.txt
 *.mod
 *.png
+*.tga
 *.plt

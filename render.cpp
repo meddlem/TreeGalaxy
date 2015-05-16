@@ -2,6 +2,8 @@
 GLuint m_texStar;
 GLFWwindow* window;
 
+using namespace std;
+
 std::default_random_engine generator;
 std::normal_distribution<float> maxwell(0.0,1.0);
 
@@ -106,7 +108,7 @@ extern "C" void Pre_Render()
 	initPointSpriteExt();
 }
 
-extern "C" void Render(float* coord, int num)
+extern "C" void Render(float* coord, int num, int frame)
 {
 	col color;
 	int width, height;
@@ -178,6 +180,8 @@ extern "C" void Render(float* coord, int num)
   
   glEnd();
 
+  screenshot(width,height,frame);
+
   glDisable(GL_POINT_SPRITE_ARB);
   glDisable(GL_BLEND);
   glDisable(GL_TEXTURE_2D);
@@ -192,4 +196,28 @@ extern "C" void Post_Render()
 	glDeleteTextures(1,&m_texStar);
 	glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+// get image data
+void screenshot (int x, int y, int frame){
+  std::stringstream ss;
+  ss << "plot" << frame << ".tga";
+  std::string filename = ss.str();
+
+  long imageSize = x * y * 3;
+  unsigned char *data = new unsigned char[imageSize];
+  glReadPixels(0,0,x,y, GL_BGR,GL_UNSIGNED_BYTE,data);// split x and y sizes into bytes
+  int xa= x % 256;
+  int xb= (x-xa)/256;int ya= y % 256;
+  int yb= (y-ya)/256;//assemble the header
+  unsigned char header[18]={0,0,2,0,0,0,0,0,0,0,0,0,(unsigned char)xa,
+    (unsigned char)xb,(unsigned char)ya,(unsigned char)yb,24,0};
+
+  // write header and data to file
+  std::fstream File(filename, ios::out | ios::binary);
+  File.write (reinterpret_cast<char *>(header), sizeof (char)*18);
+  File.write (reinterpret_cast<char *>(data), sizeof (char)*imageSize);
+  File.close();
+  delete[] data;
+  data=NULL;
 }
