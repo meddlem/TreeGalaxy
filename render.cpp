@@ -179,8 +179,9 @@ extern "C" void Render(float* coord, int num, int frame)
   }
   
   glEnd();
-
-  screenshot(width,height,frame);
+  
+  // uncomment next line to output the frames
+  //screenshot(width,height,frame);
 
   glDisable(GL_POINT_SPRITE_ARB);
   glDisable(GL_BLEND);
