@@ -16,10 +16,9 @@ contains
       do i = 1,N
         read(10,*) r(i)%mass, r(i)%pos(1), r(i)%pos(2), r(i)%pos(3), &
           v(i,1), v(i,2), v(i,3)
-        read(10,*)  
       enddo 
     close(10)
 
-    r%mass = 2._dp*r%mass ! rescale to keep the total mass the same
+    !r%mass = 2._dp*r%mass ! rescale to keep the total mass the same
   end subroutine  
 end module 

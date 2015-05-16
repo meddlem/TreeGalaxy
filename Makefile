@@ -29,5 +29,5 @@ treegalaxy: $(OBJS)
 
 .PHONY: clean
 clean:
-	$(RM) $(PROG) $(OBJS) *.mod
+	$(RM) $(PROG) $(OBJS) *.mod *.o
 	$(RM) plot*.png output.txt *.out
