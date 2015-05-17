@@ -5,7 +5,7 @@ This program is a 3d gravitational N-body simulation based on the Barnes-Hut alg
 On Ubuntu the required OpenGL libraries are installed using: 
 
 ``` sh
-#sudo apt-get install libglew-dev libsdl1.2-dev libsdl1.2debian libglfw3-dev 
+#apt-get install libglew-dev libsdl1.2-dev libsdl1.2debian libglfw3-dev 
 ```
 
 Youtube video of the collision:
