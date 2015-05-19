@@ -41,12 +41,10 @@ contains
 
     integer :: i, j
     real(c_float), allocatable, target :: rc(:,:)
-    integer(c_int) :: NC
     type(c_ptr) :: cptr
 
     allocate(rc(3,N))
     cptr = c_loc(rc(1,1))
-    NC = N
 
     call force(F,r)
     call pre_render()

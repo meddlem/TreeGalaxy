@@ -7,7 +7,7 @@ module constants
   integer, parameter :: lng = selected_int_kind(8)
   real(dp), parameter :: pi = 4._dp*atan(1._dp) 
 
-  real(dp), parameter :: dt = 0.02_dp 
+  real(dp), parameter :: dt = 0.02_dp ! time step
   real(dp), parameter :: eps = 0.025_dp ! softening parameter 
   real(dp), parameter :: theta = 0.5_dp ! opening angle
   real(dp), parameter :: Gr = 1._dp ! gravitational constant

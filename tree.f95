@@ -32,6 +32,7 @@ contains
         ! if no particles, just put particle in this node
         M%contains_particle = .true.
         M%CM = p 
+        M%particle = p 
       else
         ! otherwise we need to split up the node into octants, 
         ! and try to put new point there, and move old point to

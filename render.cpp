@@ -20,24 +20,24 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 void initGLFW()
 {
 	glfwSetErrorCallback(error_callback);
-    if (!glfwInit())
-        exit(EXIT_FAILURE);
-    window = glfwCreateWindow(2560, 1440, "Colliding Galaxy Simulation", NULL, NULL);
+  if (!glfwInit())
+      exit(EXIT_FAILURE);
+  window = glfwCreateWindow(2560, 1440, "Colliding Galaxy Simulation", NULL, NULL);
 
-    if (!window)
-    {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
+  if (!window)
+  {
+      glfwTerminate();
+      exit(EXIT_FAILURE);
+  }
 
-    // make current window OPENGL context or else OPENGL will not work
-    glfwMakeContextCurrent(window);
+  // make current window OPENGL context or else OPENGL will not work
+  glfwMakeContextCurrent(window);
 
-    // time interval at which the render buffer(back buffer) is brought to the front buffer
-    glfwSwapInterval(1);
+  // time interval at which the render buffer(back buffer) is brought to the front buffer
+  glfwSwapInterval(1);
 
-    //terminate when escape-key is pressed
-    glfwSetKeyCallback(window, key_callback);
+  //terminate when escape-key is pressed
+  glfwSetKeyCallback(window, key_callback);
 }
 
 /* Initialize OpenGL Graphics */
@@ -58,47 +58,46 @@ void initPointSpriteExt()
 
 	   // texture loading taken from
 	// http://gpwiki.org/index.php/SDL:Tutorials:Using_SDL_with_OpenGL
-	  tex = SDL_LoadBMP("particle.bmp");
+  tex = SDL_LoadBMP("particle.bmp");
 
-	  // get the number of channels in the SDL surface
-	  GLint  nOfColors = tex->format->BytesPerPixel;
-	  GLenum texture_format;
-    if (nOfColors == 4)     // contains an alpha channel
-	  {
-	    if ( tex->format->Rmask == 0x000000ff)
-	      texture_format = GL_RGBA;
-	    else
-	      texture_format = GL_BGRA;
-	  }
-	  else if (nOfColors == 3)     // no alpha channel
-	  {
-	    if ( tex->format->Rmask == 0x000000ff)
-	      texture_format = GL_RGB;
-	    else
-	      texture_format = GL_BGR;
-	   }
+  // get the number of channels in the SDL surface
+  GLint  nOfColors = tex->format->BytesPerPixel;
+  GLenum texture_format;
+  if (nOfColors == 4)     // contains an alpha channel
+  {
+    if ( tex->format->Rmask == 0x000000ff)
+      texture_format = GL_RGBA;
+    else
+      texture_format = GL_BGRA;
+  }
+  else if (nOfColors == 3)     // no alpha channel
+  {
+    if ( tex->format->Rmask == 0x000000ff)
+      texture_format = GL_RGB;
+    else
+      texture_format = GL_BGR;
+   }
 
-	  // Have OpenGL generate a texture object handle for us
-		glGenTextures(1, &m_texStar);
+  // Have OpenGL generate a texture object handle for us
+  glGenTextures(1, &m_texStar);
 
-	  // Bind the texture object
-		glBindTexture( GL_TEXTURE_2D, m_texStar );
+  // Bind the texture object
+  glBindTexture( GL_TEXTURE_2D, m_texStar );
 
-		// Set the texture's stretching properties
-	  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  // Set the texture's stretching properties
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		// Edit the texture object's image data using the information SDL_Surface gives us
-		glTexImage2D(GL_TEXTURE_2D,
-      0,
-      nOfColors,
-      tex->w,
-      tex->h,
-      0,
-      texture_format,
-      GL_UNSIGNED_BYTE,
-      tex->pixels );
-
+  // Edit the texture object's image data using the information SDL_Surface gives us
+  glTexImage2D(GL_TEXTURE_2D,
+    0,
+    nOfColors,
+    tex->w,
+    tex->h,
+    0,
+    texture_format,
+    GL_UNSIGNED_BYTE,
+    tex->pixels );
 }
 
 extern "C" void Pre_Render()
@@ -129,18 +128,12 @@ extern "C" void Render(float* coord, int num, int frame)
   glLoadIdentity();
 
   glMatrixMode( GL_MODELVIEW );
-
-   // gluPerspective(2, width/height,100, 1000);
-
   glScalef(0.05, 0.05, 0.05);
-   //glEnable(GL_NORMALIZE);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glBindTexture(GL_TEXTURE_2D, m_texStar);
 
   glGetFloatv( GL_POINT_SIZE_MAX_ARB, &maxSize );
-  // glPointParameterfARB(GL_POINT_SIZE_MAX_ARB, maxSize);
-   //glPointParameterfARB(GL_POINT_SIZE_MIN_ARB, 1.0f);
   glTexEnvf(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
 
   glEnable(GL_POINT_SPRITE_ARB);
