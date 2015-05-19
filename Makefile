@@ -4,7 +4,7 @@ CPPFLAGS = -std=c++11
 CPPLIBS = -lgfortran -lGLEW -lGL -lSDL -lGLU -lglfw 
 F90FLAGS = -ffast-math -Wall -march=native -O3 
 
-PROG = treegalaxy
+PROG = main
 
 #required objects: 
 OBJS =
@@ -14,11 +14,11 @@ OBJS += tree.o
 OBJS += initialize.o
 OBJS += interactions.o
 OBJS += render.o
-OBJS += treegalaxy.o
+OBJS += main.o
 
 all: $(PROG)
 
-treegalaxy: $(OBJS) 
+main: $(OBJS) 
 	$(CPP) -o $@ $^ $(CPPLIBS)
 
 %.o: %.f95

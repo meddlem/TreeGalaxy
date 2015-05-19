@@ -1,4 +1,4 @@
-program treegalaxy
+program main
   use iso_c_binding
   use constants 
   use treestructs
